@@ -6,7 +6,13 @@ namespace ConsoleFileManager
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Console File Manager!");
+            AppInit();
+        }
+
+        static void AppInit()
+        {
+            FileManager fileManager = new FileManager();
+            fileManager.Init();
         }
     }
 }
