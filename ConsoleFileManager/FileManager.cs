@@ -9,6 +9,11 @@ namespace ConsoleFileManager
 
         }
 
+        public void Init()
+        {
+            Console.WriteLine("Console file manager!");
+        }
+
         public void List()
         {
             Console.WriteLine("List");
