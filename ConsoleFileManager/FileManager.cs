@@ -10,7 +10,7 @@ namespace ConsoleFileManager
 
         }
 
-        public void Init()
+        public void Start()
         {
             Console.WriteLine("Console file manager!");
             Console.WriteLine("Список команд - 'help'");

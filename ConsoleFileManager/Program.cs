@@ -12,7 +12,7 @@ namespace ConsoleFileManager
         static void AppInit()
         {
             FileManager fileManager = new FileManager();
-            fileManager.Init();
+            fileManager.Start();
         }
     }
 }
