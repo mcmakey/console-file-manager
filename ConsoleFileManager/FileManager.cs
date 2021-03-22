@@ -35,6 +35,16 @@ namespace ConsoleFileManager
             Console.WriteLine("CopyDirectory");
         }
 
+        public void RemoveFile()
+        {
+            Console.WriteLine("RemoveFile");
+        }
+
+        public void RemoveDirectory()
+        {
+            Console.WriteLine("RemoveDirectory");
+        }
+
         public void FileInfo()
         {
             Console.WriteLine("FileInfo");
