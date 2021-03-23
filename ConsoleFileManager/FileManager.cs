@@ -6,17 +6,6 @@ namespace ConsoleFileManager
 {
     class FileManager
     {
-        // Команда // TODO: Вынести в отдельный файл (структ илм класс)
-        private struct Command
-        {
-            public string Name;
-            public string[] Args;
-            public Command(string name, string[] args)
-            {
-                Name = name;
-                Args = args;
-            }
-        }
         public FileManager()
         {
 
