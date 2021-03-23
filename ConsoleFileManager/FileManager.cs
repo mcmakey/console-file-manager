@@ -95,12 +95,13 @@ namespace ConsoleFileManager
 
         static Command CommandParser(string value)
         {
-
+            const char charToTrim = ' ';
             const string delimiter = "[ ]+";
             const int nameIndex = 0;
             const int argsIndex = 1;
 
-            string[] splitValue = Regex.Split(value, delimiter);
+            
+            string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
             int splitValueLength = splitValue.Length;
 
 
