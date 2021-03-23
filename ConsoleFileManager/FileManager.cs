@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ConsoleFileManager
 {
     class FileManager
     {
+        // Команда // TODO: Вынести в отдельный файл (структ илм класс)
+        private struct Command
+        {
+            public string Name;
+            public string[] Args;
+            public Command(string name, string[] args)
+            {
+                Name = name;
+                Args = args;
+            }
+        }
         public FileManager()
         {
 
@@ -63,10 +75,10 @@ namespace ConsoleFileManager
             {
                 Console.WriteLine();
                 Console.Write("> ");
-                var command = Console.ReadLine();
+                var command = CommandParser(Console.ReadLine());
                 Console.WriteLine();
 
-                switch (command)
+                switch (command.Name)
                 {
                     case "help":
                         Help();
@@ -79,6 +91,31 @@ namespace ConsoleFileManager
                         break;
                 }
             }
+        }
+
+        static Command CommandParser(string value)
+        {
+
+            const string delimiter = "[ ]+";
+            const int nameIndex = 0;
+            const int argsIndex = 1;
+
+            string[] splitValue = Regex.Split(value, delimiter);
+            int splitValueLength = splitValue.Length;
+
+
+            string name = splitValue[nameIndex];
+
+            if (splitValueLength > 1)
+            {
+                var argsLength = splitValueLength - 1;
+                string[] args = new string[argsLength];
+                Array.Copy(splitValue, argsIndex, args, 0, argsLength);
+                return new Command(name, args);
+            }
+
+            return new Command(name, null);
+
         }
         static void Help()
         {
