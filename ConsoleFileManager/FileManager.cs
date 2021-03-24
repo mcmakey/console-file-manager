@@ -67,7 +67,7 @@ namespace ConsoleFileManager
                 var command = CommandParser(Console.ReadLine());
                 Console.WriteLine();
 
-                switch (command.Name)
+                switch (command.name)
                 {
                     case "help":
                         Help();
@@ -104,7 +104,7 @@ namespace ConsoleFileManager
                 return new Command(name, args);
             }
 
-            return new Command(name, null);
+            return new Command(name);
 
         }
         static void Help()
