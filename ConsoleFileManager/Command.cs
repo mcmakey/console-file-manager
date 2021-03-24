@@ -1,5 +1,8 @@
 ﻿namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Класс для команд вводимых пользователем в командной строке (имя команды и аргументы, если есть)
+    /// </summary>
     class Command
     {
         public string name { get; }

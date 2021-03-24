@@ -6,11 +6,16 @@ namespace ConsoleFileManager
 {
     class FileManager
     {
+        /*** Конструктор ***/
         public FileManager()
         {
 
         }
 
+        /*** Публичные методы ***/
+        /// <summary>
+        /// Начало работы класса
+        /// </summary>
         public void Start()
         {
             Console.WriteLine("Console file manager!");
@@ -18,8 +23,6 @@ namespace ConsoleFileManager
             Console.WriteLine("Выйти из приложения - 'exit'");
             CommandProccesing();
         }
-
-        /*** Публичные методы класса ***/
 
         public void List()
         {
@@ -56,9 +59,11 @@ namespace ConsoleFileManager
             Console.WriteLine("DirInfo");
         }
 
-        /*** Статичные методы класса ***/
-
-        static void CommandProccesing()
+        /*** Приватные методы ***/
+        /// <summary>
+        /// командная строка приложения
+        /// </summary>
+        private void CommandProccesing()
         {
             while (true)
             {
@@ -82,7 +87,12 @@ namespace ConsoleFileManager
             }
         }
 
-        static Command CommandParser(string value)
+        /// <summary>
+        /// Парсит введенное занчение в комадной строке и возвращает экземпляр класса "Command"
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private Command CommandParser(string value)
         {
             const char charToTrim = ' ';
             const string delimiter = "[ ]+";
@@ -107,14 +117,21 @@ namespace ConsoleFileManager
             return new Command(name);
 
         }
-        static void Help()
+
+        /// <summary>
+        /// Выводит список команд приложения
+        /// </summary>
+        private void Help()
         {
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
         }
 
-        static void CloseApp()
+        /// <summary>
+        /// Завершает работу приложения
+        /// </summary>
+        private void CloseApp()
         {
             Process.GetCurrentProcess().Kill();
         }
