@@ -24,42 +24,53 @@ namespace ConsoleFileManager
             CommandProccesing();
         }
 
-        public void List()
+        /*** Приватные методы ***/
+        /// <summary>
+        /// Вывод файловой структуры
+        /// </summary>
+        /// <param name="args"></param>
+        private void List(string[] args)
         {
-            Console.WriteLine("List");
+
+            // валидация аргументов
+
+            //
+            var path = args[0];
+
+            // отображение дерева элементов
+            Console.WriteLine($"List {path}");
         }
 
-        public void CopyFile()
+        private void CopyFile()
         {
             Console.WriteLine("CopyFile");
         }
 
-        public void CopyDirectory()
+        private void CopyDirectory()
         {
             Console.WriteLine("CopyDirectory");
         }
 
-        public void RemoveFile()
+        private void RemoveFile()
         {
             Console.WriteLine("RemoveFile");
         }
 
-        public void RemoveDirectory()
+        private void RemoveDirectory()
         {
             Console.WriteLine("RemoveDirectory");
         }
 
-        public void FileInfo()
+        private void FileInfo()
         {
             Console.WriteLine("FileInfo");
         }
 
-        public void DirInfo()
+        private void DirInfo()
         {
             Console.WriteLine("DirInfo");
         }
 
-        /*** Приватные методы ***/
         /// <summary>
         /// командная строка приложения
         /// </summary>
@@ -79,6 +90,9 @@ namespace ConsoleFileManager
                         break;
                     case "exit":
                         CloseApp();
+                        break;
+                    case "ls":
+                        List(command.args);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
@@ -126,6 +140,7 @@ namespace ConsoleFileManager
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
+            Console.WriteLine("ls Disk:Source -pn - Отобразить файловую структуру в папке Source на диске Disk, n - номер страницы пейджинга");
         }
 
         /// <summary>
