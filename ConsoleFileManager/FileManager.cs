@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ConsoleFileManager
@@ -29,13 +30,30 @@ namespace ConsoleFileManager
         /// Вывод файловой структуры
         /// </summary>
         /// <param name="args"></param>
-        private void List(string[] args)
+        private void List(Command command)
         {
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
 
-            // валидация аргументов
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к дирректории");
+                return;
+            };
 
-            //
-            var path = args[0];
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к дирректори");
+                return;
+            }
+
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Дирректория по указанному пути не существует");
+                return;
+            }
 
             // отображение дерева элементов
             Console.WriteLine($"List {path}");
@@ -92,7 +110,7 @@ namespace ConsoleFileManager
                         CloseApp();
                         break;
                     case "ls":
-                        List(command.args);
+                        List(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
@@ -129,7 +147,6 @@ namespace ConsoleFileManager
             }
 
             return new Command(name);
-
         }
 
         /// <summary>
@@ -140,7 +157,7 @@ namespace ConsoleFileManager
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine("ls Disk:Source -pn - Отобразить файловую структуру в папке Source на диске Disk, n - номер страницы пейджинга");
+            Console.WriteLine("ls Path - Отобразить файловую структуру в папке Source на диске Disk");
         }
 
         /// <summary>
