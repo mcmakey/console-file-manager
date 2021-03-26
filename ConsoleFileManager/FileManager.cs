@@ -37,7 +37,7 @@ namespace ConsoleFileManager
 
             if (command.args.Length == 0)
             {
-                Console.WriteLine("Неверный формат команды, нет пути к дирректории");
+                Console.WriteLine("Неверный формат команды, нет пути к каталогу");
                 return;
             };
 
@@ -45,18 +45,29 @@ namespace ConsoleFileManager
 
             if (!pathRegex.IsMatch(path))
             {
-                Console.WriteLine("Неверный формат пути к дирректори");
+                Console.WriteLine("Неверный формат пути к каталогу");
                 return;
             }
 
             if (!Directory.Exists(path))
             {
-                Console.WriteLine("Дирректория по указанному пути не существует");
+                Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
 
             // отображение дерева элементов
             Console.WriteLine($"List {path}");
+
+            //// Получить модель дерева файлов и каталогов
+
+            /// string[] entries = Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories);
+            /// 
+
+
+            //// Отобразить дерево файлов и каталогов
+
+            DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
+            Tree.ttt(rootDirInfo);
         }
 
         private void CopyFile()
@@ -157,7 +168,7 @@ namespace ConsoleFileManager
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine("ls Path - Отобразить файловую структуру в папке Source на диске Disk");
+            Console.WriteLine(@"ls Disk:\source - Отобразить файловую структуру в папке Source на диске Disk");
         }
 
         /// <summary>
