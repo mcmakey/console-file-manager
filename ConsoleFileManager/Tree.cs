@@ -15,6 +15,8 @@ namespace ConsoleFileManager
         {
             FileInfo[] files = null;
             DirectoryInfo[] subDirs = null;
+            
+            int nextRank;
 
             // First, process all the files directly under this folder
             try
@@ -52,12 +54,18 @@ namespace ConsoleFileManager
                 }
 
                 // Now find all the subdirectories under this directory.
-                subDirs = root.GetDirectories();
+                
+            }
 
+            subDirs = root.GetDirectories();
+
+            if (subDirs != null)
+            {
+                nextRank = ++rank;
                 foreach (DirectoryInfo dirInfo in subDirs)
                 {
                     // Resursive call for each subdirectory.
-                    WalkDirectoryTree(dirInfo, rank);
+                    WalkDirectoryTree(dirInfo, nextRank);
                 }
             }
         }
