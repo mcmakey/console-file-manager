@@ -46,6 +46,7 @@ namespace ConsoleFileManager
                 indent += indentStep;
             }
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
             if (rank == 1)
             {
                 Console.WriteLine(root.Name);
@@ -57,6 +58,7 @@ namespace ConsoleFileManager
 
             if (files != null)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 indent += indentStep;
                 foreach (FileInfo fi in files)
                 {
@@ -74,6 +76,8 @@ namespace ConsoleFileManager
                     WalkDirectoryTree(dirInfo, nextRank);
                 }
             }
+
+            Console.ResetColor();
         }
     }
 }
