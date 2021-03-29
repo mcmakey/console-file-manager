@@ -9,12 +9,15 @@ namespace ConsoleFileManager
 
         public static void ttt(DirectoryInfo root)
         {
-            WalkDirectoryTree(root, 0);
+            WalkDirectoryTree(root, 1);
         }
         private static void WalkDirectoryTree(DirectoryInfo root,int rank) 
         {
             FileInfo[] files = null;
             DirectoryInfo[] subDirs = null;
+            const string node = "|--";
+            string indent = "";
+            const string indentStep = "   ";
             
             int nextRank;
 
@@ -38,23 +41,27 @@ namespace ConsoleFileManager
                 Console.WriteLine(e.Message);
             }
 
-            //// my
-            ///
-            Console.WriteLine($"{rank} {root.Name}");
+            for (int i = 2; i < rank; i++)
+            {
+                indent += indentStep;
+            }
+
+            if (rank == 1)
+            {
+                Console.WriteLine(root.Name);
+            }
+            else
+            {
+                Console.WriteLine($"{indent}{node}{root.Name}");
+            }
 
             if (files != null)
             {
+                indent += indentStep;
                 foreach (FileInfo fi in files)
                 {
-                    // In this example, we only access the existing FileInfo object. If we
-                    // want to open, delete or modify the file, then
-                    // a try-catch block is required here to handle the case
-                    // where the file has been deleted since the call to TraverseTree().
-                    Console.WriteLine(fi.Name);
+                    Console.WriteLine($"{indent}{node}{fi.Name}");
                 }
-
-                // Now find all the subdirectories under this directory.
-                
             }
 
             subDirs = root.GetDirectories();
@@ -64,7 +71,6 @@ namespace ConsoleFileManager
                 nextRank = ++rank;
                 foreach (DirectoryInfo dirInfo in subDirs)
                 {
-                    // Resursive call for each subdirectory.
                     WalkDirectoryTree(dirInfo, nextRank);
                 }
             }
