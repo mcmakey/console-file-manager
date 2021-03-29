@@ -58,16 +58,44 @@ namespace ConsoleFileManager
             // отображение дерева элементов
             Console.WriteLine($"List {path}");
 
-            //// Получить модель дерева файлов и каталогов
-
-            /// string[] entries = Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories);
-            /// 
-
-
-            //// Отобразить дерево файлов и каталогов
-
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
             Tree.Display(rootDirInfo);
+        }
+
+        /// <summary>
+        /// Отображение информации о каталоге
+        /// </summary>
+        private void DirectoryInfo(Command command)
+        {
+            Console.WriteLine("DirectoryInfo");
+
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к каталогу");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к каталогу");
+                return;
+            }
+
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Каталог по указанному пути не существует");
+                return;
+            }
+        }
+
+        private void FileInfo()
+        {
+            Console.WriteLine("FileInfo");
         }
 
         private void CopyFile()
@@ -88,16 +116,6 @@ namespace ConsoleFileManager
         private void RemoveDirectory()
         {
             Console.WriteLine("RemoveDirectory");
-        }
-
-        private void FileInfo()
-        {
-            Console.WriteLine("FileInfo");
-        }
-
-        private void DirInfo()
-        {
-            Console.WriteLine("DirInfo");
         }
 
         /// <summary>
@@ -122,6 +140,9 @@ namespace ConsoleFileManager
                         break;
                     case "ls":
                         List(command);
+                        break;
+                    case "dir":
+                        DirectoryInfo(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
