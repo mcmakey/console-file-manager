@@ -5,7 +5,7 @@ namespace ConsoleFileManager
 {
     static class Tree
     {
-        public static void DisplayDirectoryTree(DirectoryInfo root, int rank = 1) 
+        public static void Display(DirectoryInfo root, int rank = 1) 
         {
             const string dirNode = "■ ";
             const string indentStep = "  ";
@@ -62,7 +62,7 @@ namespace ConsoleFileManager
                 nextRank = ++rank;
                 foreach (DirectoryInfo dirInfo in subDirs)
                 {
-                    DisplayDirectoryTree(dirInfo, nextRank);
+                    Display(dirInfo, nextRank);
                 }
             }
 
