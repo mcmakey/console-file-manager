@@ -67,8 +67,6 @@ namespace ConsoleFileManager
         /// </summary>
         private void DirectoryInfo(Command command)
         {
-            Console.WriteLine("DirectoryInfo");
-
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
             Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
 
@@ -91,6 +89,13 @@ namespace ConsoleFileManager
                 Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
+
+            DirectoryInfo directory = new DirectoryInfo(path);
+
+            Console.WriteLine($"Название каталога: {directory.Name}");
+            Console.WriteLine($"Полное название каталога: {directory.FullName}");
+            Console.WriteLine($"Время создания каталога: {directory.CreationTime}");
+            Console.WriteLine($"Корневой каталог: {directory.Root}");
         }
 
         private void FileInfo()
@@ -189,7 +194,8 @@ namespace ConsoleFileManager
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine(@"ls Disk:\source - Отобразить файловую структуру в папке Source на диске Disk");
+            Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
         }
 
         /// <summary>
