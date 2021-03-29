@@ -67,7 +67,7 @@ namespace ConsoleFileManager
             //// Отобразить дерево файлов и каталогов
 
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
-            Tree.ttt(rootDirInfo);
+            Tree.DisplayDirectoryTree(rootDirInfo);
         }
 
         private void CopyFile()

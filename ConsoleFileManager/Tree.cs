@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace ConsoleFileManager
 {
     static class Tree
     {
+        public static void DisplayDirectoryTree(DirectoryInfo root, int rank = 1) 
+        {
+            const string dirNode = "■ ";
+            const string indentStep = "  ";
 
-        public static void ttt(DirectoryInfo root)
-        {
-            WalkDirectoryTree(root, 1);
-        }
-        private static void WalkDirectoryTree(DirectoryInfo root,int rank) 
-        {
+            int nextRank;
+
             FileInfo[] files = null;
             DirectoryInfo[] subDirs = null;
-            const string dirNode = "■ ";
             string indent = "";
-            const string indentStep = "  ";
-            
-            int nextRank;
 
             try
             {
@@ -67,7 +62,7 @@ namespace ConsoleFileManager
                 nextRank = ++rank;
                 foreach (DirectoryInfo dirInfo in subDirs)
                 {
-                    WalkDirectoryTree(dirInfo, nextRank);
+                    DisplayDirectoryTree(dirInfo, nextRank);
                 }
             }
 
