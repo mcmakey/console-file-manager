@@ -26,10 +26,11 @@ namespace ConsoleFileManager
         }
 
         /*** Приватные методы ***/
+
         /// <summary>
         /// Вывод файловой структуры
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="command"></param>
         private void List(Command command)
         {
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
@@ -65,6 +66,7 @@ namespace ConsoleFileManager
         /// <summary>
         /// Отображение информации о каталоге
         /// </summary>
+        /// <param name="command"></param>
         private void DirectoryInfo(Command command)
         {
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
@@ -92,15 +94,54 @@ namespace ConsoleFileManager
 
             DirectoryInfo directory = new DirectoryInfo(path);
 
-            Console.WriteLine($"Название каталога: {directory.Name}");
-            Console.WriteLine($"Полное название каталога: {directory.FullName}");
-            Console.WriteLine($"Время создания каталога: {directory.CreationTime}");
-            Console.WriteLine($"Корневой каталог: {directory.Root}");
+            Console.WriteLine($"Название каталога: {directory.Name}.");
+            Console.WriteLine($"Полное название каталога: {directory.FullName}.");
+            Console.WriteLine($"Время создания каталога: {directory.CreationTime}.");
+            Console.WriteLine($"Корневой каталог: {directory.Root}.");
         }
 
-        private void FileInfo()
+        /// <summary>
+        /// Отображение информации о файле
+        /// </summary>
+        /// <param name="command"></param>
+        private void FileInfo(Command command)
         {
             Console.WriteLine("FileInfo");
+
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к файлу.");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к файлу.");
+                return;
+            }
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("Файл по указанному пути не найден");
+                return;
+            }
+
+            FileInfo file = new FileInfo(path);
+
+            Console.WriteLine($"Наименование файла: {file.Name}.");
+            Console.WriteLine($"Каталог: {file.DirectoryName}.");
+            Console.WriteLine($"Время создания файла: {file.CreationTime}.");
+            Console.WriteLine($"Размер файла: {file.Length} байт.");
+
+            if (file.IsReadOnly)
+            {
+                Console.WriteLine($"Файл только для чтения.");
+            }
         }
 
         private void CopyFile()
@@ -148,6 +189,9 @@ namespace ConsoleFileManager
                         break;
                     case "dir":
                         DirectoryInfo(command);
+                        break;
+                    case "file":
+                        FileInfo(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
