@@ -15,24 +15,18 @@ namespace ConsoleFileManager
         {
             FileInfo[] files = null;
             DirectoryInfo[] subDirs = null;
-            const string node = "|--";
+            const string dirNode = "■ ";
             string indent = "";
-            const string indentStep = "   ";
+            const string indentStep = "  ";
             
             int nextRank;
 
-            // First, process all the files directly under this folder
             try
             {
                 files = root.GetFiles("*.*");
             }
-            // This is thrown if even one of the files requires permissions greater
-            // than the application provides.
             catch (UnauthorizedAccessException e)
             {
-                // This code just writes out the message and continues to recurse.
-                // You may decide to do something different here. For example, you
-                // can try to elevate your privileges and access the file again.
                 Console.WriteLine(e.Message);
             }
 
@@ -41,7 +35,7 @@ namespace ConsoleFileManager
                 Console.WriteLine(e.Message);
             }
 
-            for (int i = 2; i < rank; i++)
+            for (int i = 1; i < rank; i++)
             {
                 indent += indentStep;
             }
@@ -49,20 +43,20 @@ namespace ConsoleFileManager
             Console.ForegroundColor = ConsoleColor.Yellow;
             if (rank == 1)
             {
-                Console.WriteLine(root.Name);
+                Console.WriteLine($"{dirNode}{root.Name}");
             }
             else
             {
-                Console.WriteLine($"{indent}{node}{root.Name}");
+                Console.WriteLine($"{indent}{dirNode}{root.Name}");
             }
 
             if (files != null)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 indent += indentStep;
                 foreach (FileInfo fi in files)
                 {
-                    Console.WriteLine($"{indent}{node}{fi.Name}");
+                    Console.WriteLine($"{indent}{fi.Name}");
                 }
             }
 
