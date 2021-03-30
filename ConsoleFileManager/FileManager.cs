@@ -147,14 +147,18 @@ namespace ConsoleFileManager
             DisplaySystemAttrFile(path);
         }
 
-        private void CopyFile()
+        private void Copy(Command command)
         {
-            Console.WriteLine("CopyFile");
-        }
+            Console.WriteLine("Copy");
 
-        private void CopyDirectory()
-        {
-            Console.WriteLine("CopyDirectory");
+            if (command.args.Length < 2)
+            {
+                Console.WriteLine("Недостаточно аргументов, укажите source и target");
+                return;
+            };
+
+            var source = command.args[0];
+            var dest = command.args[1];
         }
 
         private void RemoveFile()
@@ -195,6 +199,9 @@ namespace ConsoleFileManager
                         break;
                     case "file":
                         FileInfo(command);
+                        break;
+                    case "cp":
+                        Copy(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
