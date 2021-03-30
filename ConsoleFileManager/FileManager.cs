@@ -94,10 +94,10 @@ namespace ConsoleFileManager
 
             DirectoryInfo directory = new DirectoryInfo(path);
 
-            Console.WriteLine($"Название каталога: {directory.Name}.");
-            Console.WriteLine($"Полное название каталога: {directory.FullName}.");
-            Console.WriteLine($"Время создания каталога: {directory.CreationTime}.");
-            Console.WriteLine($"Корневой каталог: {directory.Root}.");
+            Console.WriteLine($"Название каталога: {directory.Name}");
+            Console.WriteLine($"Полное название каталога: {directory.FullName}");
+            Console.WriteLine($"Время создания каталога: {directory.CreationTime}");
+            Console.WriteLine($"Корневой каталог: {directory.Root}");
         }
 
         /// <summary>
@@ -106,8 +106,6 @@ namespace ConsoleFileManager
         /// <param name="command"></param>
         private void FileInfo(Command command)
         {
-            Console.WriteLine("FileInfo");
-
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
             Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
 
@@ -132,16 +130,14 @@ namespace ConsoleFileManager
             }
 
             FileInfo file = new FileInfo(path);
-
-            Console.WriteLine($"Наименование файла: {file.Name}.");
-            Console.WriteLine($"Каталог: {file.DirectoryName}.");
-            Console.WriteLine($"Время создания файла: {file.CreationTime}.");
-            Console.WriteLine($"Размер файла: {file.Length} байт.");
-
-            if (file.IsReadOnly)
-            {
-                Console.WriteLine($"Файл только для чтения.");
-            }
+            Console.WriteLine("Информация о файле:");
+            Console.WriteLine($"Наименование - {file.Name}");
+            Console.WriteLine($"Каталог - {file.DirectoryName}");
+            Console.WriteLine($"Создание - {file.CreationTime}");
+            Console.WriteLine($"Последнее изменение - {file.LastWriteTime}");
+            Console.WriteLine($"Размер - {file.Length} байт");
+            Console.WriteLine("Системные атрибуты:");
+            DisplaySystemAttrFile(path);
         }
 
         private void CopyFile()
@@ -228,6 +224,81 @@ namespace ConsoleFileManager
             }
 
             return new Command(name);
+        }
+
+        private void DisplaySystemAttrFile(string path)
+        {
+            FileAttributes attributes = File.GetAttributes(path);
+
+            Console.Write("Файл является катлогом - ");
+            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл только для чтения - ");
+            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл сжат - ");
+            if ((attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл зашифрован - ");
+            if ((attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл скрытый - ");
+            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл является системным - ");
+            if ((attributes & FileAttributes.System) == FileAttributes.System)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
+
+            Console.Write("Файл временный - ");
+            if ((attributes & FileAttributes.Temporary) == FileAttributes.Temporary)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.WriteLine("нет");
+            }
         }
 
         /// <summary>
