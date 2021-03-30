@@ -26,10 +26,11 @@ namespace ConsoleFileManager
         }
 
         /*** Приватные методы ***/
+
         /// <summary>
         /// Вывод файловой структуры
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="command"></param>
         private void List(Command command)
         {
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
@@ -58,16 +59,92 @@ namespace ConsoleFileManager
             // отображение дерева элементов
             Console.WriteLine($"List {path}");
 
-            //// Получить модель дерева файлов и каталогов
-
-            /// string[] entries = Directory.GetFileSystemEntries(path, "*", SearchOption.AllDirectories);
-            /// 
-
-
-            //// Отобразить дерево файлов и каталогов
-
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
             Tree.Display(rootDirInfo);
+        }
+
+        /// <summary>
+        /// Отображение информации о каталоге
+        /// </summary>
+        /// <param name="command"></param>
+        private void DirectoryInfo(Command command)
+        {
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к каталогу");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к каталогу");
+                return;
+            }
+
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Каталог по указанному пути не существует");
+                return;
+            }
+
+            DirectoryInfo directory = new DirectoryInfo(path);
+
+            Console.WriteLine("Информация о каталоге:");
+            Console.WriteLine($"Наименование: {directory.Name}");
+            Console.WriteLine($"Полное наименование: {directory.FullName}");
+            Console.WriteLine($"Создание: {directory.CreationTime}");
+            Console.WriteLine($"Последнее изменение: {directory.LastWriteTime}");
+            Console.WriteLine($"Корневой каталог: {directory.Root}");
+            Console.WriteLine();
+            Console.WriteLine("Системные атрибуты:");
+            DisplaySystemAttrFile(path);
+        }
+
+        /// <summary>
+        /// Отображение информации о файле
+        /// </summary>
+        /// <param name="command"></param>
+        private void FileInfo(Command command)
+        {
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к файлу.");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к файлу.");
+                return;
+            }
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("Файл по указанному пути не найден");
+                return;
+            }
+
+            FileInfo file = new FileInfo(path);
+
+            Console.WriteLine("Информация о файле:");
+            Console.WriteLine($"Наименование - {file.Name}");
+            Console.WriteLine($"Каталог - {file.DirectoryName}");
+            Console.WriteLine($"Создание - {file.CreationTime}");
+            Console.WriteLine($"Последнее изменение - {file.LastWriteTime}");
+            Console.WriteLine($"Размер - {file.Length} байт");
+            Console.WriteLine();
+            Console.WriteLine("Системные атрибуты:");
+            DisplaySystemAttrFile(path);
         }
 
         private void CopyFile()
@@ -88,16 +165,6 @@ namespace ConsoleFileManager
         private void RemoveDirectory()
         {
             Console.WriteLine("RemoveDirectory");
-        }
-
-        private void FileInfo()
-        {
-            Console.WriteLine("FileInfo");
-        }
-
-        private void DirInfo()
-        {
-            Console.WriteLine("DirInfo");
         }
 
         /// <summary>
@@ -122,6 +189,12 @@ namespace ConsoleFileManager
                         break;
                     case "ls":
                         List(command);
+                        break;
+                    case "dir":
+                        DirectoryInfo(command);
+                        break;
+                    case "file":
+                        FileInfo(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
@@ -160,6 +233,93 @@ namespace ConsoleFileManager
             return new Command(name);
         }
 
+        private void DisplaySystemAttrFile(string path)
+        {
+            FileAttributes attributes = File.GetAttributes(path);
+
+            Console.Write("Файл является катлогом - ");
+            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл только для чтения - ");
+            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл сжат - ");
+            if ((attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл зашифрован - ");
+            if ((attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл скрытый - ");
+            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл является системным - ");
+            if ((attributes & FileAttributes.System) == FileAttributes.System)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+
+            Console.WriteLine();
+
+            Console.Write("Файл временный - ");
+            if ((attributes & FileAttributes.Temporary) == FileAttributes.Temporary)
+            {
+                Console.Write("да");
+            }
+            else
+            {
+                Console.Write("нет");
+            }
+        }
+
         /// <summary>
         /// Выводит список команд приложения
         /// </summary>
@@ -168,7 +328,8 @@ namespace ConsoleFileManager
             Console.WriteLine("Список команд:");
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine(@"ls Disk:\source - Отобразить файловую структуру в папке Source на диске Disk");
+            Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
         }
 
         /// <summary>
