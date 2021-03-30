@@ -151,8 +151,6 @@ namespace ConsoleFileManager
 
         private void Copy(Command command)
         {
-            Console.WriteLine("Copy");
-
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
             Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
 
@@ -176,7 +174,6 @@ namespace ConsoleFileManager
                 Console.WriteLine("Неверный формат пути. куда нужно копировать.");
                 return;
             }
-            
 
             if (Path.HasExtension(source))
             {
@@ -190,34 +187,51 @@ namespace ConsoleFileManager
                 // Копирование файла
                 try
                 {
-                    FileInfo sourceFile = new FileInfo(source);
+                    // Если в аргументах не указано имя нового файла, то копируем с именем исходного
+                    string destDirectory;
+                    string destFileName;
 
-                    // проверить существует ли dest каталог - если нет, то создать его
-
-                    var destDirectoryPath = Path.GetDirectoryName(dest);
-
-                    DirectoryInfo destDirectory = new DirectoryInfo(@$"{destDirectoryPath}");
-
-                    if (!destDirectory.Exists)
+                    if (Path.HasExtension(dest))
                     {
-                        destDirectory.Create();
+                        destDirectory = Path.GetDirectoryName(dest);
+                        destFileName = Path.GetFileName(dest);
+                    }
+                    else
+                    {
+                        destDirectory = dest;
+                        destFileName = Path.GetFileName(source);
                     }
 
-                    // скопировать файл
-                    sourceFile.CopyTo(dest, true);
+                    // проверить существует ли dest каталог - если нет, то создать его
+                    DirectoryInfo destDirectoryInfo = new DirectoryInfo(@$"{destDirectory}");
+
+                    if (!destDirectoryInfo.Exists)
+                    {
+                        destDirectoryInfo.Create();
+                    }
+
+                    // скопировать файл (перезаписать, если такой имеется)
+                    FileInfo sourceFile = new FileInfo(source);
+                    var destPath = Path.Combine(destDirectory, destFileName);
+                    sourceFile.CopyTo(destPath, true);
+
+                    // Проверка, точно ли файл скопирован по указанному в аргументе команды пути
+                    if (File.Exists(dest) || File.Exists(Path.Combine(dest, destFileName)))
+                    {
+                        Console.WriteLine("Файл из");
+                        Console.WriteLine(source);
+                        Console.WriteLine("в");
+                        Console.WriteLine(destPath);
+                        Console.WriteLine("Скопирован");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Что-то пошло не так. Файл не скопирован");
+                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("The process failed: {0}", e.ToString());
-                }
-
-                if (File.Exists(dest))
-                {
-                    Console.WriteLine("Файл скопирован");
-                }
-                else
-                {
-                    Console.WriteLine("Что-то пошло не так");
                 }
             }
             else
