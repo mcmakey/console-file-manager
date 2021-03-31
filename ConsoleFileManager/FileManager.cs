@@ -149,6 +149,10 @@ namespace ConsoleFileManager
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Копирование файла, каталога
+        /// </summary>
+        /// <param name="command"></param>
         private void Copy(Command command)
         {
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
@@ -288,14 +292,13 @@ namespace ConsoleFileManager
             }
         }
 
-        private void RemoveFile()
+        /// <summary>
+        /// Удаление файла, каталога
+        /// </summary>
+        /// <param name="command"></param>
+        private void Remove(Command command)
         {
-            Console.WriteLine("RemoveFile");
-        }
-
-        private void RemoveDirectory()
-        {
-            Console.WriteLine("RemoveDirectory");
+            Console.WriteLine("Remove");
         }
 
         /// <summary>
@@ -329,6 +332,9 @@ namespace ConsoleFileManager
                         break;
                     case "cp":
                         Copy(command);
+                        break;
+                    case "rm":
+                        Remove(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
