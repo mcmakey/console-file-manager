@@ -175,7 +175,23 @@ namespace ConsoleFileManager
                 return;
             }
 
+            // Копировать файл или каталог
             if (Path.HasExtension(source))
+            {
+                // Копирование файла
+                CopyFile(source, dest);
+            }
+            else
+            {
+                // Копирование каталога
+                DirectoryInfo sourceDir = new DirectoryInfo(source);
+                DirectoryInfo destinationDir = new DirectoryInfo(dest);
+
+                CopyDirectory(sourceDir, destinationDir);
+            }
+
+            // локальный метод копирования файла
+            void CopyFile(string source, string dest)
             {
                 // Проверка наличия исходного файла по указанному пути
                 if (!File.Exists(source))
@@ -184,7 +200,6 @@ namespace ConsoleFileManager
                     return;
                 }
 
-                // Копирование файла
                 try
                 {
                     string fileName;
@@ -230,30 +245,17 @@ namespace ConsoleFileManager
                     Console.WriteLine("The process failed: {0}", e.ToString());
                 }
             }
-            else
+
+            // локальный метод копирования каталога
+            void CopyDirectory(DirectoryInfo source, DirectoryInfo destination)
             {
-                // Проверка что целевой путь - каталог а не файл
+                // Проверка что целевой путь - каталог, а не файл
                 if (Path.HasExtension(dest))
                 {
                     Console.WriteLine("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
                     return;
                 }
 
-                DirectoryInfo sourceDir = new DirectoryInfo(source);
-                DirectoryInfo destinationDir = new DirectoryInfo(dest);
-
-                CopyDirectory(sourceDir, destinationDir);
-
-                Console.WriteLine("Каталог из");
-                Console.WriteLine(source);
-                Console.WriteLine("в");
-                Console.WriteLine(dest);
-                Console.WriteLine("Скопирован");
-            }
-
-            // локальный метод копирования каталога
-            void CopyDirectory(DirectoryInfo source, DirectoryInfo destination)
-            {
                 if (!destination.Exists)
                 {
                     destination.Create();
@@ -277,6 +279,12 @@ namespace ConsoleFileManager
                     // Рекурсивный вызов копирования кталога
                     CopyDirectory(dir, new DirectoryInfo(destinationDir));
                 }
+
+                Console.WriteLine("Каталог из");
+                Console.WriteLine(source);
+                Console.WriteLine("в");
+                Console.WriteLine(dest);
+                Console.WriteLine("Скопирован");
             }
         }
 
