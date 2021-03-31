@@ -299,6 +299,51 @@ namespace ConsoleFileManager
         private void Remove(Command command)
         {
             Console.WriteLine("Remove");
+
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к файлу или каталогу.");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к файлу или каталогу.");
+                return;
+            }
+
+            // Удаление файла или каталога (определяем по наличию расширения в пути)
+
+            if (Path.HasExtension(path))
+            {
+
+                if (!File.Exists(path))
+                {
+                    Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
+                    return;
+                }
+
+                File.Delete(path);
+                Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
+            }
+            else
+            {
+                //if (!Directory.Exists(path))
+                //{
+                //    Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
+                //    return;
+                //}
+
+                //Directory.Delete(path);
+                //Console.WriteLine($"Каталог {path} удален");
+
+                Console.WriteLine($"Remove directory {path}");
+            }
         }
 
         /// <summary>
