@@ -103,6 +103,7 @@ namespace ConsoleFileManager
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
             DisplaySystemAttrFile(path);
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -145,16 +146,146 @@ namespace ConsoleFileManager
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
             DisplaySystemAttrFile(path);
+            Console.WriteLine();
         }
 
-        private void CopyFile()
+        private void Copy(Command command)
         {
-            Console.WriteLine("CopyFile");
-        }
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
 
-        private void CopyDirectory()
-        {
-            Console.WriteLine("CopyDirectory");
+            if (command.args.Length < 2)
+            {
+                Console.WriteLine("Недостаточно аргументов, укажите source и target");
+                return;
+            };
+
+            var source = command.args[0];
+            var dest = command.args[1];
+
+            if (!pathRegex.IsMatch(source))
+            {
+                Console.WriteLine("Неверный формат пути к источнику.");
+                return;
+            }
+
+            if (!pathRegex.IsMatch(dest))
+            {
+                Console.WriteLine("Неверный формат пути. куда нужно копировать.");
+                return;
+            }
+
+            // Копировать файл или каталог
+            if (Path.HasExtension(source))
+            {
+                // Копирование файла
+                CopyFile(source, dest);
+            }
+            else
+            {
+                // Копирование каталога
+                DirectoryInfo sourceDir = new DirectoryInfo(source);
+                DirectoryInfo destinationDir = new DirectoryInfo(dest);
+
+                CopyDirectory(sourceDir, destinationDir);
+            }
+
+            // локальный метод копирования файла
+            void CopyFile(string source, string dest)
+            {
+                // Проверка наличия исходного файла по указанному пути
+                if (!File.Exists(source))
+                {
+                    Console.WriteLine("Файл, который нужно скопировать, по указанному пути не найден");
+                    return;
+                }
+
+                try
+                {
+                    string fileName;
+                    string targetPath;
+
+                    // Если в аргументах не указано имя нового файла, то копируем с именем исходного
+                    if (Path.HasExtension(dest))
+                    {
+                        fileName = Path.GetFileName(dest);
+                        targetPath = Path.GetDirectoryName(dest);
+                    }
+                    else
+                    {
+                        fileName = Path.GetFileName(source);
+                        targetPath = dest;
+                    }
+
+                    string sourceFile = source;
+                    string destFile = Path.Combine(targetPath, fileName);
+
+                    // Создать новый каталог (если он не существует)
+                    Directory.CreateDirectory(targetPath);
+
+                    // Скопировать 
+                    File.Copy(sourceFile, destFile, true);
+
+                    // Проверка, точно ли файл скопирован
+                    if (File.Exists(destFile))
+                    {
+                        Console.WriteLine("Файл из");
+                        Console.WriteLine(source);
+                        Console.WriteLine("в");
+                        Console.WriteLine(dest);
+                        Console.WriteLine("Скопирован");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Что-то пошло не так. Файл не скопирован");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("The process failed: {0}", e.ToString());
+                }
+            }
+
+            // локальный метод копирования каталога
+            void CopyDirectory(DirectoryInfo source, DirectoryInfo destination)
+            {
+                // Проверка что целевой путь - каталог, а не файл
+                if (Path.HasExtension(dest))
+                {
+                    Console.WriteLine("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
+                    return;
+                }
+
+                if (!destination.Exists)
+                {
+                    destination.Create();
+                }
+
+                // Скопировать все файлы
+                FileInfo[] files = source.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    file.CopyTo(Path.Combine(destination.FullName,
+                        file.Name));
+                }
+
+                // Обработка подкаталогов
+                DirectoryInfo[] dirs = source.GetDirectories();
+                foreach (DirectoryInfo dir in dirs)
+                {
+                    // Новая целевая папка
+                    string destinationDir = Path.Combine(destination.FullName, dir.Name);
+
+                    // Рекурсивный вызов копирования кталога
+                    CopyDirectory(dir, new DirectoryInfo(destinationDir));
+                }
+
+                Console.WriteLine("Каталог из");
+                Console.WriteLine(source);
+                Console.WriteLine("в");
+                Console.WriteLine(dest);
+                Console.WriteLine("Скопирован");
+            }
         }
 
         private void RemoveFile()
@@ -195,6 +326,9 @@ namespace ConsoleFileManager
                         break;
                     case "file":
                         FileInfo(command);
+                        break;
+                    case "cp":
+                        Copy(command);
                         break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
@@ -329,7 +463,11 @@ namespace ConsoleFileManager
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
             Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@"file path - Отобразить информацию о каталоге находящемся по пути path (file Disk:\source\file)");
             Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
+            Console.WriteLine(@"cp source destination - копировать файл/каталог из source в destination");
+            Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
+            Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
         }
 
         /// <summary>
