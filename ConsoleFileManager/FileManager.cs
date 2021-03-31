@@ -317,32 +317,37 @@ namespace ConsoleFileManager
                 return;
             }
 
-            // Удаление файла или каталога (определяем по наличию расширения в пути)
-
-            if (Path.HasExtension(path))
+            // Удаление файла или каталога (определяем по наличию расширения файла в пути)
+            try
             {
-
-                if (!File.Exists(path))
+                if (Path.HasExtension(path))
                 {
-                    Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
-                    return;
+
+                    if (!File.Exists(path))
+                    {
+                        Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
+                        return;
+                    }
+
+                    File.Delete(path);
+                    Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
                 }
+                else
+                {
 
-                File.Delete(path);
-                Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
+                    if (!Directory.Exists(path))
+                    {
+                        Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
+                        return;
+                    }
+
+                    Directory.Delete(path, true);
+                    Console.WriteLine($"Каталог {path} удален");
+                }
             }
-            else
+            catch (Exception e)
             {
-                //if (!Directory.Exists(path))
-                //{
-                //    Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
-                //    return;
-                //}
-
-                //Directory.Delete(path);
-                //Console.WriteLine($"Каталог {path} удален");
-
-                Console.WriteLine($"Remove directory {path}");
+                Console.WriteLine("The process failed: {0}", e.ToString());
             }
         }
 
@@ -400,7 +405,7 @@ namespace ConsoleFileManager
             const int nameIndex = 0;
             const int argsIndex = 1;
 
-            
+
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
             int splitValueLength = splitValue.Length;
 
