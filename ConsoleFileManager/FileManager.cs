@@ -232,8 +232,51 @@ namespace ConsoleFileManager
             }
             else
             {
-                // Копирование каталога
-                Console.WriteLine("Копирование каталога");
+                // Проверка что целевой путь - каталог а не файл
+                if (Path.HasExtension(dest))
+                {
+                    Console.WriteLine("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
+                    return;
+                }
+
+                DirectoryInfo sourceDir = new DirectoryInfo(source);
+                DirectoryInfo destinationDir = new DirectoryInfo(dest);
+
+                CopyDirectory(sourceDir, destinationDir);
+
+                Console.WriteLine("Каталог из");
+                Console.WriteLine(source);
+                Console.WriteLine("в");
+                Console.WriteLine(dest);
+                Console.WriteLine("Скопирован");
+            }
+
+            // локальный метод копирования каталога
+            void CopyDirectory(DirectoryInfo source, DirectoryInfo destination)
+            {
+                if (!destination.Exists)
+                {
+                    destination.Create();
+                }
+
+                // Скопировать все файлы
+                FileInfo[] files = source.GetFiles();
+                foreach (FileInfo file in files)
+                {
+                    file.CopyTo(Path.Combine(destination.FullName,
+                        file.Name));
+                }
+
+                // Обработка подкаталогов
+                DirectoryInfo[] dirs = source.GetDirectories();
+                foreach (DirectoryInfo dir in dirs)
+                {
+                    // Новая целевая папка
+                    string destinationDir = Path.Combine(destination.FullName, dir.Name);
+
+                    // Рекурсивный вызов копирования кталога
+                    CopyDirectory(dir, new DirectoryInfo(destinationDir));
+                }
             }
         }
 
