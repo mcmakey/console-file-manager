@@ -180,48 +180,44 @@ namespace ConsoleFileManager
                 // Проверка наличия исходного файла по указанному пути
                 if (!File.Exists(source))
                 {
-                    Console.WriteLine("Файл по указанному пути не найден");
+                    Console.WriteLine("Файл, который нужно скопировать, по указанному пути не найден");
                     return;
                 }
 
                 // Копирование файла
                 try
                 {
-                    // Если в аргументах не указано имя нового файла, то копируем с именем исходного
-                    string destDirectory;
-                    string destFileName;
+                    string fileName;
+                    string targetPath;
 
+                    // Если в аргументах не указано имя нового файла, то копируем с именем исходного
                     if (Path.HasExtension(dest))
                     {
-                        destDirectory = Path.GetDirectoryName(dest);
-                        destFileName = Path.GetFileName(dest);
+                        fileName = Path.GetFileName(dest);
+                        targetPath = Path.GetDirectoryName(dest);
                     }
                     else
                     {
-                        destDirectory = dest;
-                        destFileName = Path.GetFileName(source);
+                        fileName = Path.GetFileName(source);
+                        targetPath = dest;
                     }
 
-                    // проверить существует ли dest каталог - если нет, то создать его
-                    DirectoryInfo destDirectoryInfo = new DirectoryInfo(@$"{destDirectory}");
+                    string sourceFile = source;
+                    string destFile = Path.Combine(targetPath, fileName);
 
-                    if (!destDirectoryInfo.Exists)
-                    {
-                        destDirectoryInfo.Create();
-                    }
+                    // Создать новый каталог (если он не существует)
+                    Directory.CreateDirectory(targetPath);
 
-                    // скопировать файл (перезаписать, если такой имеется)
-                    FileInfo sourceFile = new FileInfo(source);
-                    var destPath = Path.Combine(destDirectory, destFileName);
-                    sourceFile.CopyTo(destPath, true);
+                    // Скопировать 
+                    File.Copy(sourceFile, destFile, true);
 
-                    // Проверка, точно ли файл скопирован по указанному в аргументе команды пути
-                    if (File.Exists(dest) || File.Exists(Path.Combine(dest, destFileName)))
+                    // Проверка, точно ли файл скопирован
+                    if (File.Exists(destFile))
                     {
                         Console.WriteLine("Файл из");
                         Console.WriteLine(source);
                         Console.WriteLine("в");
-                        Console.WriteLine(destPath);
+                        Console.WriteLine(dest);
                         Console.WriteLine("Скопирован");
                     }
                     else
