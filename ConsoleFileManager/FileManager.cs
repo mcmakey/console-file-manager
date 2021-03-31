@@ -463,7 +463,11 @@ namespace ConsoleFileManager
             Console.WriteLine("help - Показать список команд");
             Console.WriteLine("exit - Выйти из приложения");
             Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@"file path - Отобразить информацию о каталоге находящемся по пути path (file Disk:\source\file)");
             Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
+            Console.WriteLine(@"cp source destination - копировать файл/каталог из source в destination");
+            Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
+            Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
         }
 
         /// <summary>
