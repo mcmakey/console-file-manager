@@ -149,6 +149,10 @@ namespace ConsoleFileManager
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Копирование файла, каталога
+        /// </summary>
+        /// <param name="command"></param>
         private void Copy(Command command)
         {
             // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
@@ -288,14 +292,63 @@ namespace ConsoleFileManager
             }
         }
 
-        private void RemoveFile()
+        /// <summary>
+        /// Удаление файла, каталога
+        /// </summary>
+        /// <param name="command"></param>
+        private void Remove(Command command)
         {
-            Console.WriteLine("RemoveFile");
-        }
+            Console.WriteLine("Remove");
 
-        private void RemoveDirectory()
-        {
-            Console.WriteLine("RemoveDirectory");
+            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
+            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
+
+            if (command.args.Length == 0)
+            {
+                Console.WriteLine("Неверный формат команды, нет пути к файлу или каталогу.");
+                return;
+            };
+
+            var path = command.args[0];
+
+            if (!pathRegex.IsMatch(path))
+            {
+                Console.WriteLine("Неверный формат пути к файлу или каталогу.");
+                return;
+            }
+
+            // Удаление файла или каталога (определяем по наличию расширения файла в пути)
+            try
+            {
+                if (Path.HasExtension(path))
+                {
+
+                    if (!File.Exists(path))
+                    {
+                        Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
+                        return;
+                    }
+
+                    File.Delete(path);
+                    Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
+                }
+                else
+                {
+
+                    if (!Directory.Exists(path))
+                    {
+                        Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
+                        return;
+                    }
+
+                    Directory.Delete(path, true);
+                    Console.WriteLine($"Каталог {path} удален");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The process failed: {0}", e.ToString());
+            }
         }
 
         /// <summary>
@@ -330,6 +383,9 @@ namespace ConsoleFileManager
                     case "cp":
                         Copy(command);
                         break;
+                    case "rm":
+                        Remove(command);
+                        break;
                     default:
                         Console.WriteLine("Такой команды не существует, попробуйте еще");
                         break;
@@ -349,7 +405,7 @@ namespace ConsoleFileManager
             const int nameIndex = 0;
             const int argsIndex = 1;
 
-            
+
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
             int splitValueLength = splitValue.Length;
 
