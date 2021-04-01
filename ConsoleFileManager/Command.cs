@@ -5,18 +5,18 @@
     /// </summary>
     class Command
     {
-        public string name { get; }
-        public string[] args { get; }
+        public string Name { get; }
+        public string[] Arguments { get; }
 
         public Command(string name, string[] args)
         {
-            this.name = name;
-            this.args = args;
+            this.Name = name;
+            this.Arguments = args;
         }
 
         public Command(string name)
         {
-            this.name = name;
+            this.Name = name;
         }
     }
 }
