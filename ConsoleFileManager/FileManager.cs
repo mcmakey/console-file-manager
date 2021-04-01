@@ -50,6 +50,8 @@ namespace ConsoleFileManager
                 return;
             }
 
+            // end validation
+
             if (!Directory.Exists(path))
             {
                 Console.WriteLine("Каталог по указанному пути не существует");
@@ -85,6 +87,8 @@ namespace ConsoleFileManager
                 Console.WriteLine("Неверный формат пути к каталогу");
                 return;
             }
+
+            // end validation
 
             if (!Directory.Exists(path))
             {
@@ -128,6 +132,8 @@ namespace ConsoleFileManager
                 Console.WriteLine("Неверный формат пути к файлу.");
                 return;
             }
+
+            // end validation
 
             if (!File.Exists(path))
             {
@@ -178,6 +184,8 @@ namespace ConsoleFileManager
                 Console.WriteLine("Неверный формат пути. куда нужно копировать.");
                 return;
             }
+
+            // end validation
 
             // Копировать файл или каталог
             if (Path.HasExtension(source))
@@ -317,6 +325,8 @@ namespace ConsoleFileManager
                 return;
             }
 
+            // end validation
+
             // Удаление файла или каталога (определяем по наличию расширения файла в пути)
             try
             {
@@ -365,25 +375,25 @@ namespace ConsoleFileManager
 
                 switch (command.name)
                 {
-                    case "help":
+                    case CommandsNames.Help:
                         Help();
                         break;
-                    case "exit":
+                    case CommandsNames.Exit:
                         CloseApp();
                         break;
-                    case "ls":
+                    case CommandsNames.List:
                         List(command);
                         break;
-                    case "dir":
+                    case CommandsNames.DirectoryInfo:
                         DirectoryInfo(command);
                         break;
-                    case "file":
+                    case CommandsNames.FileInfo:
                         FileInfo(command);
                         break;
-                    case "cp":
+                    case CommandsNames.Copy:
                         Copy(command);
                         break;
-                    case "rm":
+                    case CommandsNames.Remove:
                         Remove(command);
                         break;
                     default:
@@ -516,14 +526,15 @@ namespace ConsoleFileManager
         private void Help()
         {
             Console.WriteLine("Список команд:");
-            Console.WriteLine("help - Показать список команд");
-            Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
-            Console.WriteLine(@"file path - Отобразить информацию о каталоге находящемся по пути path (file Disk:\source\file)");
-            Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
-            Console.WriteLine(@"cp source destination - копировать файл/каталог из source в destination");
+            Console.WriteLine($"{CommandsNames.Help} - Показать список команд");
+            Console.WriteLine($"{CommandsNames.Exit} - Выйти из приложения");
+            Console.WriteLine(@$"{CommandsNames.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@$"{CommandsNames.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)");
+            Console.WriteLine(@$"{CommandsNames.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
+            Console.WriteLine(@$"{CommandsNames.Copy} source destination - копировать файл/каталог из source в destination");
             Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
             Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
+            Console.WriteLine(@$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path");
         }
 
         /// <summary>
