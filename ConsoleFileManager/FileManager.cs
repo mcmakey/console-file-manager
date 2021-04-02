@@ -382,7 +382,7 @@ namespace ConsoleFileManager
                         Remove(command);
                         break;
                     default:
-                        Console.WriteLine("Некорректный, попробуйте еще");
+                        Console.WriteLine("Некорректный ввод, попробуйте еще");
                         break;
                 }
             }
@@ -404,7 +404,8 @@ namespace ConsoleFileManager
 
 
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
-            int splitValueLength = splitValue.Length;
+            var splitValueLength = splitValue.Length;
+            var numberArguments = splitValueLength - 1;
 
             string name = splitValue[nameIndex];
 
@@ -414,17 +415,23 @@ namespace ConsoleFileManager
             }
 
             // Проверка наличия аргументов для команд List, FileInfo, DirectoryInfo, Copy, Remove
-            if (splitValueLength - 1 == 0)
+            if (numberArguments == 0)
             {
                 Console.WriteLine(
                     $"Для команд {CommandsNames.List}," +
                     $" {CommandsNames.FileInfo}," +
                     $" {CommandsNames.DirectoryInfo}," +
                     $" {CommandsNames.Copy}," +
-                    $" {CommandsNames.Remove} ," +
+                    $" {CommandsNames.Remove}," +
                     "требуются аргументы (см. help)");
 
-                return new Command(CommandsNames.EmptyCommand); // заглушка
+                return new Command(null); // заглушка при невалидной комманде
+            }
+
+            // Проверка наличия обязательных 2 аргументов для команды "Copy"
+            if (name == CommandsNames.Copy && numberArguments < 2)
+            {
+                Console.WriteLine("Недостаточно аргументов (см. help)");
             }
 
             var argsLength = splitValueLength - 1;

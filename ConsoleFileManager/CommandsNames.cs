@@ -9,6 +9,5 @@
         public const string FileInfo = "file";
         public const string Copy = "cp";
         public const string Remove = "rm";
-        public const string EmptyCommand = "empty-command"; // заглушка при невалидной комманде
     }
 }
