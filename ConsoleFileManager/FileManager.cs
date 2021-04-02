@@ -361,29 +361,19 @@ namespace ConsoleFileManager
                 return new Command(commandName);
             }
 
-            // Проверка наличия аргументов для команд List, FileInfo, DirectoryInfo, Copy, Remove
-            if (args.Length == 0)
-            {
-                Console.WriteLine(
-                    $"Для команд {CommandsNames.List}," +
-                    $" {CommandsNames.FileInfo}," +
-                    $" {CommandsNames.DirectoryInfo}," +
-                    $" {CommandsNames.Copy}," +
-                    $" {CommandsNames.Remove}," +
-                    "требуются аргументы (см. help)");
-
-                return new Command(null); // заглушка при невалидном вводе
-            }
-
             var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
                                        || (commandName == CommandsNames.DirectoryInfo) 
                                        || (commandName == CommandsNames.Remove);
 
-            if ((commandName == CommandsNames.List) && isPathFormatСorrect(args[0]))
+            if ((commandName == CommandsNames.List) 
+                && args.Length != 0
+                && isPathFormatСorrect(args[0]))
             {
                 return new Command(commandName, args[0]);
             }
-            else if (isSingleArgumentCommand && isPathFormatСorrect(args[0]))
+            else if (isSingleArgumentCommand 
+                && args.Length != 0 
+                && isPathFormatСorrect(args[0]))
             {
                 return new Command(commandName, args[0]);
             }
