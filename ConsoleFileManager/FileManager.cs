@@ -28,71 +28,56 @@ namespace ConsoleFileManager
         /*** Приватные методы ***/
 
         /// <summary>
+        /// Выводит список команд приложения
+        /// </summary>
+        private void Help()
+        {
+            Console.WriteLine("Список команд:");
+            Console.WriteLine($"{CommandsNames.Help} - Показать список команд");
+            Console.WriteLine($"{CommandsNames.Exit} - Выйти из приложения");
+            Console.WriteLine(@$"{CommandsNames.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
+            Console.WriteLine(@$"{CommandsNames.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)");
+            Console.WriteLine(@$"{CommandsNames.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
+            Console.WriteLine(@$"{CommandsNames.Copy} source destination - копировать файл/каталог из source в destination");
+            Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
+            Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
+            Console.WriteLine(@$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path");
+        }
+
+        /// <summary>
         /// Вывод файловой структуры
         /// </summary>
-        /// <param name="command"></param>
-        private void List(Command command)
+        /// <param name="source"></param>
+        private void List(string source)
         {
-            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
-            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
-
-            if (command.args.Length == 0)
-            {
-                Console.WriteLine("Неверный формат команды, нет пути к каталогу");
-                return;
-            };
-
-            var path = command.args[0];
-
-            if (!pathRegex.IsMatch(path))
-            {
-                Console.WriteLine("Неверный формат пути к каталогу");
-                return;
-            }
-
-            if (!Directory.Exists(path))
+            // Проверка существования каталога по укзанному пути
+            if (!Directory.Exists(source))
             {
                 Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
 
             // отображение дерева элементов
-            Console.WriteLine($"List {path}");
+            Console.WriteLine($"List {source}");
+            Console.WriteLine();
 
-            DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
+            DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
             Tree.Display(rootDirInfo);
         }
 
         /// <summary>
         /// Отображение информации о каталоге
         /// </summary>
-        /// <param name="command"></param>
-        private void DirectoryInfo(Command command)
+        /// <param name="source"></param>
+        private void DirectoryInfo(string source)
         {
-            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
-            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
-
-            if (command.args.Length == 0)
-            {
-                Console.WriteLine("Неверный формат команды, нет пути к каталогу");
-                return;
-            };
-
-            var path = command.args[0];
-
-            if (!pathRegex.IsMatch(path))
-            {
-                Console.WriteLine("Неверный формат пути к каталогу");
-                return;
-            }
-
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(source))
             {
                 Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
 
-            DirectoryInfo directory = new DirectoryInfo(path);
+            DirectoryInfo directory = new DirectoryInfo(source);
 
             Console.WriteLine("Информация о каталоге:");
             Console.WriteLine($"Наименование: {directory.Name}");
@@ -102,40 +87,23 @@ namespace ConsoleFileManager
             Console.WriteLine($"Корневой каталог: {directory.Root}");
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(path);
+            DisplaySystemAttrFile(source);
             Console.WriteLine();
         }
 
         /// <summary>
         /// Отображение информации о файле
         /// </summary>
-        /// <param name="command"></param>
-        private void FileInfo(Command command)
+        /// <param name="source"></param>
+        private void FileInfo(string source)
         {
-            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
-            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
-
-            if (command.args.Length == 0)
-            {
-                Console.WriteLine("Неверный формат команды, нет пути к файлу.");
-                return;
-            };
-
-            var path = command.args[0];
-
-            if (!pathRegex.IsMatch(path))
-            {
-                Console.WriteLine("Неверный формат пути к файлу.");
-                return;
-            }
-
-            if (!File.Exists(path))
+            if (!File.Exists(source))
             {
                 Console.WriteLine("Файл по указанному пути не найден");
                 return;
             }
 
-            FileInfo file = new FileInfo(path);
+            FileInfo file = new FileInfo(source);
 
             Console.WriteLine("Информация о файле:");
             Console.WriteLine($"Наименование - {file.Name}");
@@ -145,39 +113,17 @@ namespace ConsoleFileManager
             Console.WriteLine($"Размер - {file.Length} байт");
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(path);
+            DisplaySystemAttrFile(source);
             Console.WriteLine();
         }
 
         /// <summary>
         /// Копирование файла, каталога
         /// </summary>
-        /// <param name="command"></param>
-        private void Copy(Command command)
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
+        private void Copy(string source, string dest)
         {
-            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
-            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
-
-            if (command.args.Length < 2)
-            {
-                Console.WriteLine("Недостаточно аргументов, укажите source и target");
-                return;
-            };
-
-            var source = command.args[0];
-            var dest = command.args[1];
-
-            if (!pathRegex.IsMatch(source))
-            {
-                Console.WriteLine("Неверный формат пути к источнику.");
-                return;
-            }
-
-            if (!pathRegex.IsMatch(dest))
-            {
-                Console.WriteLine("Неверный формат пути. куда нужно копировать.");
-                return;
-            }
 
             // Копировать файл или каталог
             if (Path.HasExtension(source))
@@ -269,8 +215,7 @@ namespace ConsoleFileManager
                 FileInfo[] files = source.GetFiles();
                 foreach (FileInfo file in files)
                 {
-                    file.CopyTo(Path.Combine(destination.FullName,
-                        file.Name));
+                    file.CopyTo(Path.Combine(destination.FullName, file.Name));
                 }
 
                 // Обработка подкаталогов
@@ -295,54 +240,35 @@ namespace ConsoleFileManager
         /// <summary>
         /// Удаление файла, каталога
         /// </summary>
-        /// <param name="command"></param>
-        private void Remove(Command command)
+        /// <param name="source"></param>
+        private void Remove(string source)
         {
-            Console.WriteLine("Remove");
-
-            // валидация аргументов команды (TODO: Потом для всех команд отделный валидатор)
-            Regex pathRegex = new Regex(@"([A-Z]:)?\\.*");
-
-            if (command.args.Length == 0)
-            {
-                Console.WriteLine("Неверный формат команды, нет пути к файлу или каталогу.");
-                return;
-            };
-
-            var path = command.args[0];
-
-            if (!pathRegex.IsMatch(path))
-            {
-                Console.WriteLine("Неверный формат пути к файлу или каталогу.");
-                return;
-            }
-
             // Удаление файла или каталога (определяем по наличию расширения файла в пути)
             try
             {
-                if (Path.HasExtension(path))
+                if (Path.HasExtension(source))
                 {
 
-                    if (!File.Exists(path))
+                    if (!File.Exists(source))
                     {
                         Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
                         return;
                     }
 
-                    File.Delete(path);
-                    Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
+                    File.Delete(source);
+                    Console.WriteLine($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
                 }
                 else
                 {
 
-                    if (!Directory.Exists(path))
+                    if (!Directory.Exists(source))
                     {
                         Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
                         return;
                     }
 
-                    Directory.Delete(path, true);
-                    Console.WriteLine($"Каталог {path} удален");
+                    Directory.Delete(source, true);
+                    Console.WriteLine($"Каталог {source} удален");
                 }
             }
             catch (Exception e)
@@ -350,6 +276,16 @@ namespace ConsoleFileManager
                 Console.WriteLine("The process failed: {0}", e.ToString());
             }
         }
+
+        /// <summary>
+        /// Завершает работу приложения
+        /// </summary>
+        private void CloseApp()
+        {
+            Process.GetCurrentProcess().Kill();
+        }
+
+        /////////////
 
         /// <summary>
         /// командная строка приложения
@@ -363,35 +299,37 @@ namespace ConsoleFileManager
                 var command = CommandParser(Console.ReadLine());
                 Console.WriteLine();
 
-                switch (command.name)
+                switch (command.Name)
                 {
-                    case "help":
+                    case CommandsNames.Help:
                         Help();
                         break;
-                    case "exit":
+                    case CommandsNames.Exit:
                         CloseApp();
                         break;
-                    case "ls":
-                        List(command);
+                    case CommandsNames.List:
+                        List(command.Source);
                         break;
-                    case "dir":
-                        DirectoryInfo(command);
+                    case CommandsNames.DirectoryInfo:
+                        DirectoryInfo(command.Source);
                         break;
-                    case "file":
-                        FileInfo(command);
+                    case CommandsNames.FileInfo:
+                        FileInfo(command.Source);
                         break;
-                    case "cp":
-                        Copy(command);
+                    case CommandsNames.Copy:
+                        Copy(command.Source, command.Destination);
                         break;
-                    case "rm":
-                        Remove(command);
+                    case CommandsNames.Remove:
+                        Remove(command.Source);
                         break;
                     default:
-                        Console.WriteLine("Такой команды не существует, попробуйте еще");
+                        Console.WriteLine("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
                         break;
                 }
             }
         }
+
+        ///////////// helpers
 
         /// <summary>
         /// Парсит введенное занчение в комадной строке и возвращает экземпляр класса "Command"
@@ -405,22 +343,50 @@ namespace ConsoleFileManager
             const int nameIndex = 0;
             const int argsIndex = 1;
 
-
+            // массив строковых значений из строки ввода
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
-            int splitValueLength = splitValue.Length;
+            var splitValueLength = splitValue.Length;
+
+            // наименование команды
+            string commandName = splitValue[nameIndex];
+
+            // массив аргументов команды (без имени)
+            var argsLength = splitValueLength - 1;
+            string[] args = new string[argsLength];
+            Array.Copy(splitValue, argsIndex, args, 0, argsLength);
 
 
-            string name = splitValue[nameIndex];
-
-            if (splitValueLength > 1)
+            if (commandName == CommandsNames.Help || commandName == CommandsNames.Exit)
             {
-                var argsLength = splitValueLength - 1;
-                string[] args = new string[argsLength];
-                Array.Copy(splitValue, argsIndex, args, 0, argsLength);
-                return new Command(name, args);
+                return new Command(commandName);
             }
 
-            return new Command(name);
+            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
+                                       || (commandName == CommandsNames.DirectoryInfo) 
+                                       || (commandName == CommandsNames.Remove);
+
+            if ((commandName == CommandsNames.List) 
+                && args.Length != 0
+                && isPathFormatСorrect(args[0]))
+            {
+                return new Command(commandName, args[0]);
+            }
+            else if (isSingleArgumentCommand 
+                && args.Length != 0 
+                && isPathFormatСorrect(args[0]))
+            {
+                return new Command(commandName, args[0]);
+            }
+            else if ((commandName == CommandsNames.Copy) 
+                && args.Length == 2
+                && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
+            {
+                return new Command(commandName, args[0], args[1]);
+            }
+            else
+            {
+                return new Command(null); // TODO: ?
+            }
         }
 
         private void DisplaySystemAttrFile(string path)
@@ -510,28 +476,10 @@ namespace ConsoleFileManager
             }
         }
 
-        /// <summary>
-        /// Выводит список команд приложения
-        /// </summary>
-        private void Help()
+        private bool isPathFormatСorrect(string path)
         {
-            Console.WriteLine("Список команд:");
-            Console.WriteLine("help - Показать список команд");
-            Console.WriteLine("exit - Выйти из приложения");
-            Console.WriteLine(@"ls path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
-            Console.WriteLine(@"file path - Отобразить информацию о каталоге находящемся по пути path (file Disk:\source\file)");
-            Console.WriteLine(@"dir path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
-            Console.WriteLine(@"cp source destination - копировать файл/каталог из source в destination");
-            Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
-            Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
-        }
-
-        /// <summary>
-        /// Завершает работу приложения
-        /// </summary>
-        private void CloseApp()
-        {
-            Process.GetCurrentProcess().Kill();
+            Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
+            return pathRegex.IsMatch(path);
         }
     }
 }
