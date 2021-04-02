@@ -323,7 +323,7 @@ namespace ConsoleFileManager
                         Remove(command.Source);
                         break;
                     default:
-                        Console.WriteLine("Некорректный ввод, попробуйте еще");
+                        Console.WriteLine("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
                         break;
                 }
             }
@@ -375,13 +375,6 @@ namespace ConsoleFileManager
                 return new Command(null); // заглушка при невалидном вводе
             }
 
-            // Проверка наличия обязательных 2 аргументов для команды "Copy"
-            if (commandName == CommandsNames.Copy && args.Length < 2)
-            {
-                Console.WriteLine("Недостаточно аргументов (см. help)");
-            }
-
-            // 
             var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
                                        || (commandName == CommandsNames.DirectoryInfo) 
                                        || (commandName == CommandsNames.Remove);
@@ -394,7 +387,9 @@ namespace ConsoleFileManager
             {
                 return new Command(commandName, args[0]);
             }
-            else if ((commandName == CommandsNames.Copy) && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
+            else if ((commandName == CommandsNames.Copy) 
+                && args.Length == 2
+                && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
             {
                 return new Command(commandName, args[0], args[1]);
             }
