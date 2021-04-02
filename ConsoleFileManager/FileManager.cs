@@ -47,56 +47,37 @@ namespace ConsoleFileManager
         /// <summary>
         /// Вывод файловой структуры
         /// </summary>
-        /// <param name="command"></param>
-        private void List(string[] arguments)
+        /// <param name="source"></param>
+        private void List(string source)
         {
-            var path = arguments[0];
-
-            // Проверка формата пути
-            if (!isPathFormatСorrect(path))
-            {
-                Console.WriteLine("Неверный формат пути к каталогу");
-                return;
-            }
-
             // Проверка существования каталога по укзанному пути
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(source))
             {
                 Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
 
             // отображение дерева элементов
-            Console.WriteLine($"List {path}");
+            Console.WriteLine($"List {source}");
+            Console.WriteLine();
 
-            DirectoryInfo rootDirInfo = new DirectoryInfo($"{path}");
+            DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
             Tree.Display(rootDirInfo);
         }
 
         /// <summary>
         /// Отображение информации о каталоге
         /// </summary>
-        /// <param name="command"></param>
-        private void DirectoryInfo(Command command)
+        /// <param name="source"></param>
+        private void DirectoryInfo(string source)
         {
-            var path = command.Arguments[0];
-
-            // Проверка формата пути
-            if (!isPathFormatСorrect(path))
-            {
-                Console.WriteLine("Неверный формат пути к каталогу");
-                return;
-            }
-
-            // end validation
-
-            if (!Directory.Exists(path))
+            if (!Directory.Exists(source))
             {
                 Console.WriteLine("Каталог по указанному пути не существует");
                 return;
             }
 
-            DirectoryInfo directory = new DirectoryInfo(path);
+            DirectoryInfo directory = new DirectoryInfo(source);
 
             Console.WriteLine("Информация о каталоге:");
             Console.WriteLine($"Наименование: {directory.Name}");
@@ -106,34 +87,23 @@ namespace ConsoleFileManager
             Console.WriteLine($"Корневой каталог: {directory.Root}");
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(path);
+            DisplaySystemAttrFile(source);
             Console.WriteLine();
         }
 
         /// <summary>
         /// Отображение информации о файле
         /// </summary>
-        /// <param name="command"></param>
-        private void FileInfo(Command command)
+        /// <param name="source"></param>
+        private void FileInfo(string source)
         {
-            var path = command.Arguments[0];
-
-            // Проверка формата пути
-            if (!isPathFormatСorrect(path))
-            {
-                Console.WriteLine("Неверный формат пути к файлу.");
-                return;
-            }
-
-            // end validation
-
-            if (!File.Exists(path))
+            if (!File.Exists(source))
             {
                 Console.WriteLine("Файл по указанному пути не найден");
                 return;
             }
 
-            FileInfo file = new FileInfo(path);
+            FileInfo file = new FileInfo(source);
 
             Console.WriteLine("Информация о файле:");
             Console.WriteLine($"Наименование - {file.Name}");
@@ -143,37 +113,17 @@ namespace ConsoleFileManager
             Console.WriteLine($"Размер - {file.Length} байт");
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(path);
+            DisplaySystemAttrFile(source);
             Console.WriteLine();
         }
 
         /// <summary>
         /// Копирование файла, каталога
         /// </summary>
-        /// <param name="command"></param>
-        private void Copy(Command command)
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
+        private void Copy(string source, string dest)
         {
-            if (command.Arguments.Length < 2)
-            {
-                Console.WriteLine("Недостаточно аргументов, укажите source и target");
-                return;
-            };
-
-            var source = command.Arguments[0];
-            var dest = command.Arguments[1];
-
-            // Проверка формата пути
-            if (!isPathFormatСorrect(source))
-            {
-                Console.WriteLine("Неверный формат пути к источнику.");
-                return;
-            }
-
-            if (!isPathFormatСorrect(dest))
-            {
-                Console.WriteLine("Неверный формат пути. куда нужно копировать.");
-                return;
-            }
 
             // Копировать файл или каталог
             if (Path.HasExtension(source))
@@ -290,44 +240,35 @@ namespace ConsoleFileManager
         /// <summary>
         /// Удаление файла, каталога
         /// </summary>
-        /// <param name="command"></param>
-        private void Remove(Command command)
+        /// <param name="source"></param>
+        private void Remove(string source)
         {
-            var path = command.Arguments[0];
-
-            // Проверка формата пути
-            if (!isPathFormatСorrect(path))
-            {
-                Console.WriteLine("Неверный формат пути к файлу или каталогу.");
-                return;
-            }
-
             // Удаление файла или каталога (определяем по наличию расширения файла в пути)
             try
             {
-                if (Path.HasExtension(path))
+                if (Path.HasExtension(source))
                 {
 
-                    if (!File.Exists(path))
+                    if (!File.Exists(source))
                     {
                         Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
                         return;
                     }
 
-                    File.Delete(path);
-                    Console.WriteLine($"Файл {Path.GetFileName(path)} из каталога {Path.GetDirectoryName(path)} удален");
+                    File.Delete(source);
+                    Console.WriteLine($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
                 }
                 else
                 {
 
-                    if (!Directory.Exists(path))
+                    if (!Directory.Exists(source))
                     {
                         Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
                         return;
                     }
 
-                    Directory.Delete(path, true);
-                    Console.WriteLine($"Каталог {path} удален");
+                    Directory.Delete(source, true);
+                    Console.WriteLine($"Каталог {source} удален");
                 }
             }
             catch (Exception e)
@@ -367,19 +308,19 @@ namespace ConsoleFileManager
                         CloseApp();
                         break;
                     case CommandsNames.List:
-                        List(command.Arguments);
+                        List(command.Source);
                         break;
                     case CommandsNames.DirectoryInfo:
-                        DirectoryInfo(command);
+                        DirectoryInfo(command.Source);
                         break;
                     case CommandsNames.FileInfo:
-                        FileInfo(command);
+                        FileInfo(command.Source);
                         break;
                     case CommandsNames.Copy:
-                        Copy(command);
+                        Copy(command.Source, command.Destination);
                         break;
                     case CommandsNames.Remove:
-                        Remove(command);
+                        Remove(command.Source);
                         break;
                     default:
                         Console.WriteLine("Некорректный ввод, попробуйте еще");
@@ -402,20 +343,26 @@ namespace ConsoleFileManager
             const int nameIndex = 0;
             const int argsIndex = 1;
 
-
+            // массив строковых значений из строки ввода
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
             var splitValueLength = splitValue.Length;
-            var numberArguments = splitValueLength - 1;
 
-            string name = splitValue[nameIndex];
+            // наименование команды
+            string commandName = splitValue[nameIndex];
 
-            if (name == CommandsNames.Help || name  == CommandsNames.Exit)
+            // массив аргументов команды (без имени)
+            var argsLength = splitValueLength - 1;
+            string[] args = new string[argsLength];
+            Array.Copy(splitValue, argsIndex, args, 0, argsLength);
+
+
+            if (commandName == CommandsNames.Help || commandName == CommandsNames.Exit)
             {
-                return new Command(name);
+                return new Command(commandName);
             }
 
             // Проверка наличия аргументов для команд List, FileInfo, DirectoryInfo, Copy, Remove
-            if (numberArguments == 0)
+            if (args.Length == 0)
             {
                 Console.WriteLine(
                     $"Для команд {CommandsNames.List}," +
@@ -425,19 +372,36 @@ namespace ConsoleFileManager
                     $" {CommandsNames.Remove}," +
                     "требуются аргументы (см. help)");
 
-                return new Command(null); // заглушка при невалидной комманде
+                return new Command(null); // заглушка при невалидном вводе
             }
 
             // Проверка наличия обязательных 2 аргументов для команды "Copy"
-            if (name == CommandsNames.Copy && numberArguments < 2)
+            if (commandName == CommandsNames.Copy && args.Length < 2)
             {
                 Console.WriteLine("Недостаточно аргументов (см. help)");
             }
 
-            var argsLength = splitValueLength - 1;
-            string[] args = new string[argsLength];
-            Array.Copy(splitValue, argsIndex, args, 0, argsLength);
-            return new Command(name, args);
+            // 
+            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
+                                       || (commandName == CommandsNames.DirectoryInfo) 
+                                       || (commandName == CommandsNames.Remove);
+
+            if ((commandName == CommandsNames.List) && isPathFormatСorrect(args[0]))
+            {
+                return new Command(commandName, args[0]);
+            }
+            else if (isSingleArgumentCommand && isPathFormatСorrect(args[0]))
+            {
+                return new Command(commandName, args[0]);
+            }
+            else if ((commandName == CommandsNames.Copy) && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
+            {
+                return new Command(commandName, args[0], args[1]);
+            }
+            else
+            {
+                return new Command(null); // TODO: ?
+            }
         }
 
         private void DisplaySystemAttrFile(string path)
@@ -530,7 +494,6 @@ namespace ConsoleFileManager
         private bool isPathFormatСorrect(string path)
         {
             Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
-
             return pathRegex.IsMatch(path);
         }
     }
