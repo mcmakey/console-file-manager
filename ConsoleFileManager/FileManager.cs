@@ -20,9 +20,10 @@ namespace ConsoleFileManager
         public void Start()
         {
             Display();
-            Console.WriteLine("Console file manager!");
-            Console.WriteLine("Список команд - 'help'");
-            Console.WriteLine("Выйти из приложения - 'ex'");
+            //Console.WriteLine("Console file manager!");
+            //Console.WriteLine("Список команд - 'help'");
+            //Console.WriteLine("Выйти из приложения - 'ex'");
+
             CommandProccesing();
         }
 
@@ -30,7 +31,10 @@ namespace ConsoleFileManager
 
         private void Display()
         {
+            // нарисовать три окна (экземпляры класса (высота. координаты начала, координаты начала свободного места для вставки курсора)) и туда уже вствлять дерево, инфу , комантную строку
             Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            Frame ttt = new Frame(5, 10);
+            ttt.Dispaly();
         }
 
         /// <summary>
