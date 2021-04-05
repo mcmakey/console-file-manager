@@ -19,13 +19,19 @@ namespace ConsoleFileManager
         /// </summary>
         public void Start()
         {
+            Display();
             Console.WriteLine("Console file manager!");
             Console.WriteLine("Список команд - 'help'");
-            Console.WriteLine("Выйти из приложения - 'exit'");
+            Console.WriteLine("Выйти из приложения - 'ex'");
             CommandProccesing();
         }
 
         /*** Приватные методы ***/
+
+        private void Display()
+        {
+            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+        }
 
         /// <summary>
         /// Выводит список команд приложения
