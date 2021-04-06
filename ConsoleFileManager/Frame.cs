@@ -25,7 +25,7 @@ namespace ConsoleFileManager
             StringBuilder line = new StringBuilder();
 
             var lines = this.Height;
-            var columns = Console.LargestWindowWidth - 2; // TODO: 2 - в конст;
+            var columns = Console.LargestWindowWidth;
 
             for (int i = 0; i < columns; i++)
             {

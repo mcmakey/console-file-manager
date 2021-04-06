@@ -32,7 +32,16 @@ namespace ConsoleFileManager
         private void Display()
         {
             // нарисовать три окна (экземпляры класса (высота. координаты начала, координаты начала свободного места для вставки курсора)) и туда уже вствлять дерево, инфу , комантную строку
+
             Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+
+            // TODO: потом убрать
+            //Console.WriteLine("Console statistics:");
+            //Console.WriteLine("   Buffer: {0} x {1}", Console.BufferHeight, Console.BufferWidth);
+            //Console.WriteLine("   Window: {0} x {1}", Console.WindowHeight, Console.WindowWidth);
+            //Console.WriteLine("   Window starts at {0}:{1}.", Console.WindowLeft, Console.WindowTop);
+
             Frame ttt = new Frame(5, 10);
             ttt.Dispaly();
         }
