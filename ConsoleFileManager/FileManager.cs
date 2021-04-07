@@ -7,6 +7,12 @@ namespace ConsoleFileManager
 {
     class FileManager
     {
+        private int appWindowWidth = Console.LargestWindowWidth;
+        private int appWindowHeight = Console.LargestWindowHeight;
+
+        private const int commandFrameHeight = 15;
+        private Frame CommandFrame = new Frame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+
         /*** Конструктор ***/
         public FileManager()
         {
@@ -20,10 +26,6 @@ namespace ConsoleFileManager
         public void Start()
         {
             Display();
-            //Console.WriteLine("Console file manager!");
-            //Console.WriteLine("Список команд - 'help'");
-            //Console.WriteLine("Выйти из приложения - 'ex'");
-
             CommandProccesing();
         }
 
@@ -31,19 +33,13 @@ namespace ConsoleFileManager
 
         private void Display()
         {
-            // нарисовать три окна (экземпляры класса (высота. координаты начала, координаты начала свободного места для вставки курсора)) и туда уже вствлять дерево, инфу , комантную строку
+            // Установка размеров окна приложения
+            Console.SetWindowSize(appWindowWidth, appWindowHeight);
+            Console.SetBufferSize(appWindowWidth, appWindowHeight);
 
-            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-
-            // TODO: потом убрать
-            //Console.WriteLine("Console statistics:");
-            //Console.WriteLine("   Buffer: {0} x {1}", Console.BufferHeight, Console.BufferWidth);
-            //Console.WriteLine("   Window: {0} x {1}", Console.WindowHeight, Console.WindowWidth);
-            //Console.WriteLine("   Window starts at {0}:{1}.", Console.WindowLeft, Console.WindowTop);
-
-            Frame ttt = new Frame(5, 10);
-            ttt.Dispaly();
+            // Отрисовка окна командной строки 
+            CommandFrame.Dispaly();
+            CommandFrame.ShowTitle("Введите команду ('help - список команд')");
         }
 
         /// <summary>
@@ -313,7 +309,8 @@ namespace ConsoleFileManager
         {
             while (true)
             {
-                Console.WriteLine();
+                CommandFrame.CommandLineReady();
+                
                 Console.Write("> ");
                 var command = CommandParser(Console.ReadLine());
                 Console.WriteLine();
@@ -380,25 +377,28 @@ namespace ConsoleFileManager
                 return new Command(commandName);
             }
 
-            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
-                                       || (commandName == CommandsNames.DirectoryInfo) 
-                                       || (commandName == CommandsNames.Remove);
+            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) ||
+                (commandName == CommandsNames.DirectoryInfo) ||
+                (commandName == CommandsNames.Remove);
 
-            if ((commandName == CommandsNames.List) 
-                && args.Length != 0
-                && isPathFormatСorrect(args[0]))
+            if ((commandName == CommandsNames.List) &&
+                args.Length != 0 &&
+                isPathFormatСorrect(args[0])
+            )
             {
                 return new Command(commandName, args[0]);
             }
-            else if (isSingleArgumentCommand 
-                && args.Length != 0 
-                && isPathFormatСorrect(args[0]))
+            else if (isSingleArgumentCommand &&
+                args.Length != 0 &&
+                isPathFormatСorrect(args[0])
+            )
             {
                 return new Command(commandName, args[0]);
             }
-            else if ((commandName == CommandsNames.Copy) 
-                && args.Length == 2
-                && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
+            else if ((commandName == CommandsNames.Copy) &&
+                args.Length == 2 &&
+                (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1]))
+            )
             {
                 return new Command(commandName, args[0], args[1]);
             }

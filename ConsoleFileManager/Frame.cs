@@ -8,8 +8,9 @@ namespace ConsoleFileManager
         private const string lineX = "─";
         private const string lineY = "│";
         private const string corner = "+";
-        private const string space = " ";
-        
+        private const char space = ' ';
+        private const int leftPosition = 2;
+
         private int TopPosition { get; }
         private int Height { get; }
 
@@ -55,5 +56,43 @@ namespace ConsoleFileManager
                 }
             }
         }
+
+        // методы окна командной строки
+
+        public void ShowTitle(string title)
+        {
+            Console.SetCursorPosition(leftPosition, TopPosition);
+            Console.WriteLine(title);
+        }
+        public void CommandLineReady()
+        {
+            // Очистка строк
+            var commandLineTopPosition = TopPosition + 1;
+            var linesToClean = 2;
+            var leftOffset = 3;
+            CleanLines(commandLineTopPosition, linesToClean, leftOffset);
+
+            // установка курсора в начальную позицию комантной строки
+            Console.SetCursorPosition(leftPosition, commandLineTopPosition);
+        }
+
+        //
+
+        /// <summary>
+        /// Очитска строк
+        /// </summary>
+        /// <param name="startLine"></param>
+        /// <param name="amountLines"></param>
+        /// <param name="leftOffset"></param>
+        private void CleanLines(int startLine, int amountLines, int leftOffset = 0)
+        {
+            for (int i = 0; i < amountLines; i++)
+            {
+                var currentLine = startLine + i;
+                Console.SetCursorPosition(leftPosition, currentLine);
+                Console.Write(new String(space, Console.BufferWidth - leftPosition * 2));
+            }
+        }
+
     }
 }
