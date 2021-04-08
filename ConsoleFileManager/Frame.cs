@@ -76,6 +76,33 @@ namespace ConsoleFileManager
             Console.SetCursorPosition(leftPosition, commandLineTopPosition);
         }
 
+        public void ShowInfoContent(string[] info)
+        {
+            var commandInfoTopPosition = TopPosition + 3;
+            Console.SetCursorPosition(leftPosition, commandInfoTopPosition);
+
+            for (int i = 0; i < info.Length; i++)
+            {
+                Console.SetCursorPosition(leftPosition, commandInfoTopPosition + i);
+                Console.WriteLine(info[i]);
+            }
+        }
+
+        public void ShowInfoContent(string info)
+        {
+            var commandInfoTopPosition = TopPosition + 3;
+            Console.SetCursorPosition(leftPosition, commandInfoTopPosition);
+
+            Console.WriteLine(info);
+        }
+
+        public void CleanInfo()
+        {
+            var commandInfoTopPosition = TopPosition + 3;
+            var linesToClean = TopPosition + Height - commandInfoTopPosition - 2; // TODO: 2
+            CleanLines(commandInfoTopPosition, linesToClean, leftPosition);
+        }
+
         //
 
         /// <summary>
@@ -84,9 +111,9 @@ namespace ConsoleFileManager
         /// <param name="startLine"></param>
         /// <param name="amountLines"></param>
         /// <param name="leftOffset"></param>
-        private void CleanLines(int startLine, int amountLines, int leftOffset = 0)
+        private void CleanLines(int startLine, int numberLinesToClear, int leftOffset = 0)
         {
-            for (int i = 0; i < amountLines; i++)
+            for (int i = 0; i < numberLinesToClear; i++)
             {
                 var currentLine = startLine + i;
                 Console.SetCursorPosition(leftPosition, currentLine);
