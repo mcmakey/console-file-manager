@@ -11,7 +11,7 @@ namespace ConsoleFileManager
         private int appWindowHeight = Console.LargestWindowHeight;
 
         private const int commandFrameHeight = 15;
-        private Frame CommandFrame = new Frame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         /*** Конструктор ***/
         public FileManager()
