@@ -307,10 +307,7 @@ namespace ConsoleFileManager
             while (true)
             {
                 CommandFrame.CommandLineReady();
-                
-                Console.Write("> ");
                 var command = CommandParser(Console.ReadLine());
-                Console.WriteLine();
                 CommandFrame.CleanInfo();
 
                 switch (command.Name)

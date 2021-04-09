@@ -38,6 +38,7 @@ namespace ConsoleFileManager
 
             // установка курсора в начальную позицию комантной строки
             Console.SetCursorPosition(leftPosition, commandLineTopPosition);
+            Console.Write("> ");
         }
 
         /// <summary>
