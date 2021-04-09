@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace ConsoleFileManager
 {
@@ -11,7 +12,7 @@ namespace ConsoleFileManager
         private int appWindowHeight = Console.LargestWindowHeight;
 
         private const int commandFrameHeight = 5;
-        private const int InfoFrameHeight = 12;
+        private const int InfoFrameHeight = 15;
 
         private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
         private InfoFrame InfoFrame = new InfoFrame(Console.LargestWindowHeight - commandFrameHeight - InfoFrameHeight, InfoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
@@ -104,16 +105,22 @@ namespace ConsoleFileManager
 
             DirectoryInfo directory = new DirectoryInfo(source);
 
-            Console.WriteLine("Информация о каталоге:");
-            Console.WriteLine($"Наименование: {directory.Name}");
-            Console.WriteLine($"Полное наименование: {directory.FullName}");
-            Console.WriteLine($"Создание: {directory.CreationTime}");
-            Console.WriteLine($"Последнее изменение: {directory.LastWriteTime}");
-            Console.WriteLine($"Корневой каталог: {directory.Root}");
-            Console.WriteLine();
-            Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(source);
-            Console.WriteLine();
+
+            var directoryAttributes = new string[]
+            {
+                "Информация о каталоге:",
+                $"Наименование: {directory.Name}",
+                $"Полное наименование: {directory.FullName}",
+                $"Создание: {directory.CreationTime}",
+                $"Последнее изменение: {directory.LastWriteTime}",
+                $"Корневой каталог: {directory.Root}"
+            };
+
+            var systemDirectoryAttributes = getSystemAttrFileText(source);
+
+            var allAttributes = directoryAttributes.Concat(systemDirectoryAttributes).ToArray();
+
+            InfoFrame.ShowInfoContent(allAttributes);
         }
 
         /// <summary>
@@ -138,7 +145,7 @@ namespace ConsoleFileManager
             Console.WriteLine($"Размер - {file.Length} байт");
             Console.WriteLine();
             Console.WriteLine("Системные атрибуты:");
-            // DisplaySystemAttrFile(source); // TODO: temporary hide
+            // getSystemAttrFileText(source); // TODO: temporary hide
             Console.WriteLine();
         }
 
@@ -226,6 +233,7 @@ namespace ConsoleFileManager
                     return;
                 }
 
+                // Проверка что целевой каталог существует, если нет то создается
                 if (!destination.Exists)
                 {
                     destination.Create();
@@ -406,91 +414,31 @@ namespace ConsoleFileManager
             }
         }
 
-        private void DisplaySystemAttrFile(string path)
+        /// <summary>
+        /// Метод возвращает текстовый массив системных атрибутов 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string[] getSystemAttrFileText(string path)
         {
             FileAttributes attributes = File.GetAttributes(path);
 
-            Console.Write("Файл является катлогом - ");
-            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            // Проверка системнго атрибута, возвр. текст (да/нет)
+            string CheckAttrText(FileAttributes attributes, FileAttributes attr)
             {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
+                return (attributes & attr) == attr ? "да" : "нет";
             }
 
-            Console.WriteLine();
-
-            Console.Write("Файл только для чтения - ");
-            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            return new string[]
             {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл сжат - ");
-            if ((attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл зашифрован - ");
-            if ((attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл скрытый - ");
-            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл является системным - ");
-            if ((attributes & FileAttributes.System) == FileAttributes.System)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл временный - ");
-            if ((attributes & FileAttributes.Temporary) == FileAttributes.Temporary)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
+                $"Файл является каталогом - {CheckAttrText(attributes, FileAttributes.Directory)}",
+                $"Файл только для чтения - {CheckAttrText(attributes, FileAttributes.ReadOnly)}",
+                $"Файл сжат - {CheckAttrText(attributes, FileAttributes.Compressed)}",
+                $"Файл зашифрован - {CheckAttrText(attributes, FileAttributes.Encrypted)}",
+                $"Файл является системным - {CheckAttrText(attributes, FileAttributes.System)}",
+                $"Файл скрытый - {CheckAttrText(attributes, FileAttributes.Hidden)}",
+                $"Файл временный - {CheckAttrText(attributes, FileAttributes.Temporary)}"
+            };
         }
 
         private bool isPathFormatСorrect(string path)
