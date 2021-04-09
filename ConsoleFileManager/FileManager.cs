@@ -73,7 +73,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                Console.WriteLine("Каталог по указанному пути не существует");
+                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
@@ -93,7 +93,7 @@ namespace ConsoleFileManager
         {
             if (!Directory.Exists(source))
             {
-                Console.WriteLine("Каталог по указанному пути не существует");
+                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace ConsoleFileManager
         {
             if (!File.Exists(source))
             {
-                Console.WriteLine("Файл по указанному пути не найден");
+                CommandFrame.ShowInfoContent("Файл по указанному пути не найден");
                 return;
             }
 
@@ -166,7 +166,7 @@ namespace ConsoleFileManager
                 // Проверка наличия исходного файла по указанному пути
                 if (!File.Exists(source))
                 {
-                    Console.WriteLine("Файл, который нужно скопировать, по указанному пути не найден");
+                    CommandFrame.ShowInfoContent("Файл, который нужно скопировать, по указанному пути не найден");
                     return;
                 }
 
@@ -199,20 +199,16 @@ namespace ConsoleFileManager
                     // Проверка, точно ли файл скопирован
                     if (File.Exists(destFile))
                     {
-                        Console.WriteLine("Файл из");
-                        Console.WriteLine(source);
-                        Console.WriteLine("в");
-                        Console.WriteLine(dest);
-                        Console.WriteLine("Скопирован");
+                        CommandFrame.ShowInfoContent($"Файл из {source} cкопирован в {dest}");
                     }
                     else
                     {
-                        Console.WriteLine("Что-то пошло не так. Файл не скопирован");
+                        CommandFrame.ShowInfoContent("Что-то пошло не так. Файл не скопирован");
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("The process failed: {0}", e.ToString());
+                    CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
                 }
             }
 
@@ -222,7 +218,7 @@ namespace ConsoleFileManager
                 // Проверка что целевой путь - каталог, а не файл
                 if (Path.HasExtension(dest))
                 {
-                    Console.WriteLine("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
+                    CommandFrame.ShowInfoContent("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
                     return;
                 }
 
@@ -249,11 +245,7 @@ namespace ConsoleFileManager
                     CopyDirectory(dir, new DirectoryInfo(destinationDir));
                 }
 
-                Console.WriteLine("Каталог из");
-                Console.WriteLine(source);
-                Console.WriteLine("в");
-                Console.WriteLine(dest);
-                Console.WriteLine("Скопирован");
+                CommandFrame.ShowInfoContent($"Каталог из {source} скопирован в {dest}");
             }
         }
 
@@ -271,29 +263,29 @@ namespace ConsoleFileManager
 
                     if (!File.Exists(source))
                     {
-                        Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
+                        CommandFrame.ShowInfoContent("Удаляемый Файл, по указанному пути не найден");
                         return;
                     }
 
                     File.Delete(source);
-                    Console.WriteLine($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
+                    CommandFrame.ShowInfoContent($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
                 }
                 else
                 {
 
                     if (!Directory.Exists(source))
                     {
-                        Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
+                        CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                         return;
                     }
 
                     Directory.Delete(source, true);
-                    Console.WriteLine($"Каталог {source} удален");
+                    CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("The process failed: {0}", e.ToString());
+                CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
             }
         }
 
