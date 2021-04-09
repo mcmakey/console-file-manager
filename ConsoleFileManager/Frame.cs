@@ -65,8 +65,7 @@ namespace ConsoleFileManager
         /// </summary>
         /// <param name="startLine"></param>
         /// <param name="amountLines"></param>
-        /// <param name="leftOffset"></param>
-        public void CleanLines(int startLine, int numberLinesToClear, int leftOffset = 0)
+        public void CleanLines(int startLine, int numberLinesToClear)
         {
             for (int i = 0; i < numberLinesToClear; i++)
             {
