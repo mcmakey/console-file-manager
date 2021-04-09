@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleFileManager
 {
@@ -23,7 +21,7 @@ namespace ConsoleFileManager
         public void ShowInfoContent(string[] info)
         {
             // Очистка окна от предыдущего сообщения
-            CleanInfo();
+            Clean();
 
             // Отображение нового сообщения 
             var infoTopPosition = TopPosition + 1; // TODO: getter/setter
@@ -43,23 +41,13 @@ namespace ConsoleFileManager
         public void ShowInfoContent(string info)
         {
             // Очистка окна от предыдущего сообщения
-            CleanInfo();
+            Clean();
 
             // Отображение нового сообщения
             var infoTopPosition = TopPosition + 1; // TODO: getter/setter
             Console.SetCursorPosition(leftPosition, infoTopPosition);
 
             Console.WriteLine(info);
-        }
-
-        /// <summary>
-        /// Очистка окна 
-        /// </summary>
-        public void CleanInfo()
-        {
-            var infoTopPosition = TopPosition + 1; // TODO: getter/setter
-            var linesToClean = Height - 2; // 2  - две строки с границей (верхняя и нижняя)
-            CleanLines(infoTopPosition, linesToClean);
         }
     }
 }

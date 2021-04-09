@@ -42,7 +42,6 @@ namespace ConsoleFileManager
 
             // Отрисовка окна командной строки 
             CommandFrame.Dispaly();
-            CommandFrame.ShowTitle("Введите команду ('help - список команд')");
 
             // Отрисовка окна информации 
             InfoFrame.Dispaly();
@@ -313,7 +312,6 @@ namespace ConsoleFileManager
             {
                 CommandFrame.CommandLineReady();
                 var command = CommandParser(Console.ReadLine());
-                // InfoFrame.CleanInfo();
 
                 switch (command.Name)
                 {
