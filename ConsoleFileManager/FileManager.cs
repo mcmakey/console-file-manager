@@ -13,7 +13,7 @@ namespace ConsoleFileManager
         private const int commandFrameHeight = 5;
         private const int InfoFrameHeight = 12;
 
-        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
         private InfoFrame InfoFrame = new InfoFrame(Console.LargestWindowHeight - commandFrameHeight - InfoFrameHeight, InfoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         /*** Конструктор ***/

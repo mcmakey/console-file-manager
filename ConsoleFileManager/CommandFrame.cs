@@ -32,14 +32,14 @@ namespace ConsoleFileManager
         /// </summary>
         public void CommandLineReady()
         {
-            // Очистка окна от предыдущей команды // TODO: fix delete bottom border frame
+            // Очистка окна от предыдущей команды
             Clean();
 
             // установка курсора в начальную позицию комантной строки
-            var commandLineTopPosition = TopPosition;
-            Console.SetCursorPosition(leftPosition, commandLineTopPosition);
-            Console.Write("Введите команду('help - список команд')");
-            Console.SetCursorPosition(leftPosition, commandLineTopPosition + 1);
+            var commandLineContentTopPosition = TopPosition + 1;
+            Console.SetCursorPosition(leftPosition, commandLineContentTopPosition);
+            Console.WriteLine("Введите команду('help - список команд')");
+            Console.SetCursorPosition(leftPosition, commandLineContentTopPosition + 1);
             Console.Write("> ");
         }
     }
