@@ -7,6 +7,12 @@ namespace ConsoleFileManager
 {
     class FileManager
     {
+        private int appWindowWidth = Console.LargestWindowWidth;
+        private int appWindowHeight = Console.LargestWindowHeight;
+
+        private const int commandFrameHeight = 15;
+        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+
         /*** Конструктор ***/
         public FileManager()
         {
@@ -19,29 +25,43 @@ namespace ConsoleFileManager
         /// </summary>
         public void Start()
         {
-            Console.WriteLine("Console file manager!");
-            Console.WriteLine("Список команд - 'help'");
-            Console.WriteLine("Выйти из приложения - 'exit'");
+            Display();
             CommandProccesing();
         }
 
         /*** Приватные методы ***/
+
+        private void Display()
+        {
+            // Установка размеров окна приложения
+            Console.SetWindowSize(appWindowWidth, appWindowHeight);
+            Console.SetBufferSize(appWindowWidth, appWindowHeight);
+
+            // Отрисовка окна командной строки 
+            CommandFrame.Dispaly();
+            CommandFrame.ShowTitle("Введите команду ('help - список команд')");
+        }
 
         /// <summary>
         /// Выводит список команд приложения
         /// </summary>
         private void Help()
         {
-            Console.WriteLine("Список команд:");
-            Console.WriteLine($"{CommandsNames.Help} - Показать список команд");
-            Console.WriteLine($"{CommandsNames.Exit} - Выйти из приложения");
-            Console.WriteLine(@$"{CommandsNames.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source");
-            Console.WriteLine(@$"{CommandsNames.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)");
-            Console.WriteLine(@$"{CommandsNames.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)");
-            Console.WriteLine(@$"{CommandsNames.Copy} source destination - копировать файл/каталог из source в destination");
-            Console.WriteLine(@"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir");
-            Console.WriteLine(@"Пример копирование каталога: cp disk:\source disk:\dest");
-            Console.WriteLine(@$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path");
+            string[] commandDescriptions =
+            {
+                "Список команд:",
+                $"{CommandsNames.Help} - Показать список команд",
+                $"{CommandsNames.Exit} - Выйти из приложения",
+                @$"{CommandsNames.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
+                @$"{CommandsNames.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
+                @$"{CommandsNames.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
+                @$"{CommandsNames.Copy} source destination - копировать файл/каталог из source в destination",
+                @"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir",
+                @"Пример копирование каталога: cp disk:\source disk:\dest",
+                @$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path"
+            };
+
+            CommandFrame.ShowInfoContent(commandDescriptions);
         }
 
         /// <summary>
@@ -53,7 +73,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                Console.WriteLine("Каталог по указанному пути не существует");
+                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
@@ -73,7 +93,7 @@ namespace ConsoleFileManager
         {
             if (!Directory.Exists(source))
             {
-                Console.WriteLine("Каталог по указанному пути не существует");
+                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
@@ -99,7 +119,7 @@ namespace ConsoleFileManager
         {
             if (!File.Exists(source))
             {
-                Console.WriteLine("Файл по указанному пути не найден");
+                CommandFrame.ShowInfoContent("Файл по указанному пути не найден");
                 return;
             }
 
@@ -146,7 +166,7 @@ namespace ConsoleFileManager
                 // Проверка наличия исходного файла по указанному пути
                 if (!File.Exists(source))
                 {
-                    Console.WriteLine("Файл, который нужно скопировать, по указанному пути не найден");
+                    CommandFrame.ShowInfoContent("Файл, который нужно скопировать, по указанному пути не найден");
                     return;
                 }
 
@@ -179,20 +199,16 @@ namespace ConsoleFileManager
                     // Проверка, точно ли файл скопирован
                     if (File.Exists(destFile))
                     {
-                        Console.WriteLine("Файл из");
-                        Console.WriteLine(source);
-                        Console.WriteLine("в");
-                        Console.WriteLine(dest);
-                        Console.WriteLine("Скопирован");
+                        CommandFrame.ShowInfoContent($"Файл из {source} cкопирован в {dest}");
                     }
                     else
                     {
-                        Console.WriteLine("Что-то пошло не так. Файл не скопирован");
+                        CommandFrame.ShowInfoContent("Что-то пошло не так. Файл не скопирован");
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("The process failed: {0}", e.ToString());
+                    CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
                 }
             }
 
@@ -202,7 +218,7 @@ namespace ConsoleFileManager
                 // Проверка что целевой путь - каталог, а не файл
                 if (Path.HasExtension(dest))
                 {
-                    Console.WriteLine("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
+                    CommandFrame.ShowInfoContent("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
                     return;
                 }
 
@@ -229,11 +245,7 @@ namespace ConsoleFileManager
                     CopyDirectory(dir, new DirectoryInfo(destinationDir));
                 }
 
-                Console.WriteLine("Каталог из");
-                Console.WriteLine(source);
-                Console.WriteLine("в");
-                Console.WriteLine(dest);
-                Console.WriteLine("Скопирован");
+                CommandFrame.ShowInfoContent($"Каталог из {source} скопирован в {dest}");
             }
         }
 
@@ -251,29 +263,29 @@ namespace ConsoleFileManager
 
                     if (!File.Exists(source))
                     {
-                        Console.WriteLine("Удаляемый Файл, по указанному пути не найден");
+                        CommandFrame.ShowInfoContent("Удаляемый Файл, по указанному пути не найден");
                         return;
                     }
 
                     File.Delete(source);
-                    Console.WriteLine($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
+                    CommandFrame.ShowInfoContent($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
                 }
                 else
                 {
 
                     if (!Directory.Exists(source))
                     {
-                        Console.WriteLine("Удаляемый каталог, по указанному пути не найден");
+                        CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                         return;
                     }
 
                     Directory.Delete(source, true);
-                    Console.WriteLine($"Каталог {source} удален");
+                    CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("The process failed: {0}", e.ToString());
+                CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
             }
         }
 
@@ -294,10 +306,9 @@ namespace ConsoleFileManager
         {
             while (true)
             {
-                Console.WriteLine();
-                Console.Write("> ");
+                CommandFrame.CommandLineReady();
                 var command = CommandParser(Console.ReadLine());
-                Console.WriteLine();
+                CommandFrame.CleanInfo();
 
                 switch (command.Name)
                 {
@@ -323,7 +334,7 @@ namespace ConsoleFileManager
                         Remove(command.Source);
                         break;
                     default:
-                        Console.WriteLine("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
+                        CommandFrame.ShowInfoContent("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
                         break;
                 }
             }
@@ -361,25 +372,28 @@ namespace ConsoleFileManager
                 return new Command(commandName);
             }
 
-            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) 
-                                       || (commandName == CommandsNames.DirectoryInfo) 
-                                       || (commandName == CommandsNames.Remove);
+            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) ||
+                (commandName == CommandsNames.DirectoryInfo) ||
+                (commandName == CommandsNames.Remove);
 
-            if ((commandName == CommandsNames.List) 
-                && args.Length != 0
-                && isPathFormatСorrect(args[0]))
+            if ((commandName == CommandsNames.List) &&
+                args.Length != 0 &&
+                isPathFormatСorrect(args[0])
+            )
             {
                 return new Command(commandName, args[0]);
             }
-            else if (isSingleArgumentCommand 
-                && args.Length != 0 
-                && isPathFormatСorrect(args[0]))
+            else if (isSingleArgumentCommand &&
+                args.Length != 0 &&
+                isPathFormatСorrect(args[0])
+            )
             {
                 return new Command(commandName, args[0]);
             }
-            else if ((commandName == CommandsNames.Copy) 
-                && args.Length == 2
-                && (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1])))
+            else if ((commandName == CommandsNames.Copy) &&
+                args.Length == 2 &&
+                (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1]))
+            )
             {
                 return new Command(commandName, args[0], args[1]);
             }
