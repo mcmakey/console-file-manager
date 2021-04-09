@@ -20,6 +20,9 @@ namespace ConsoleFileManager
             this.Height = height;
         }
 
+        /// <summary>
+        /// Отрисовка окна
+        /// </summary>
         public void Dispaly()
         {
             StringBuilder firstLastLine = new StringBuilder();

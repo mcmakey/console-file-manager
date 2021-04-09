@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Класс командного окна
+    /// </summary>
     class CommandFrame : Frame
     {
 
@@ -11,11 +14,20 @@ namespace ConsoleFileManager
         {
             
         }
+
+        /// <summary>
+        /// показ заголовка в командном окне
+        /// </summary>
+        /// <param name="title"></param>
         public void ShowTitle(string title)
         {
             Console.SetCursorPosition(leftPosition, TopPosition);
             Console.WriteLine(title);
         }
+
+        /// <summary>
+        /// Подготовка комантной строки к вводу новой команды
+        /// </summary>
         public void CommandLineReady()
         {
             // Очистка строк
@@ -28,6 +40,10 @@ namespace ConsoleFileManager
             Console.SetCursorPosition(leftPosition, commandLineTopPosition);
         }
 
+        /// <summary>
+        /// Отображение сообщений в командном окне (аргумент - массив строк)
+        /// </summary>
+        /// <param name="info"></param>
         public void ShowInfoContent(string[] info)
         {
             var commandInfoTopPosition = TopPosition + 3;
@@ -40,6 +56,10 @@ namespace ConsoleFileManager
             }
         }
 
+        /// <summary>
+        /// Отображение сообщений в командном окне (аргумент - строка)
+        /// </summary>
+        /// <param name="info"></param>
         public void ShowInfoContent(string info)
         {
             var commandInfoTopPosition = TopPosition + 3;
@@ -48,6 +68,9 @@ namespace ConsoleFileManager
             Console.WriteLine(info);
         }
 
+        /// <summary>
+        /// Стерерть сообщения в комантном окне
+        /// </summary>
         public void CleanInfo()
         {
             var commandInfoTopPosition = TopPosition + 3;
