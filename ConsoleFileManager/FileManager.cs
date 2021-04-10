@@ -87,10 +87,10 @@ namespace ConsoleFileManager
                 return;
             }
 
-            // отображение дерева элементов
-            Console.WriteLine($"List {source}");
-            Console.WriteLine();
+            // Очистка окна
+            TreeFrame.Clean();
 
+            // Отрисовка дерева каталогов
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
             Tree.Display(rootDirInfo);
         }
