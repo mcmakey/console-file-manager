@@ -97,14 +97,15 @@ namespace ConsoleFileManager
         /// <param name="source"></param>
         private void DirectoryInfo(string source)
         {
+            // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
                 InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
+            // Получение информации о каталоге
             DirectoryInfo directory = new DirectoryInfo(source);
-
 
             var directoryAttributes = new string[]
             {
@@ -118,9 +119,10 @@ namespace ConsoleFileManager
 
             var systemDirectoryAttributes = getSystemAttrFileText(source);
 
-            var allAttributes = directoryAttributes.Concat(systemDirectoryAttributes).ToArray();
+            var info = directoryAttributes.Concat(systemDirectoryAttributes).ToArray();
 
-            InfoFrame.ShowInfoContent(allAttributes);
+            // Отобразить информацию в окне
+            InfoFrame.ShowInfoContent(info);
         }
 
         /// <summary>
@@ -129,24 +131,32 @@ namespace ConsoleFileManager
         /// <param name="source"></param>
         private void FileInfo(string source)
         {
+            // Проверка существования файла по укзанному пути
             if (!File.Exists(source))
             {
                 InfoFrame.ShowInfoContent("Файл по указанному пути не найден");
                 return;
             }
 
+            // Получение информации о файле
             FileInfo file = new FileInfo(source);
 
-            Console.WriteLine("Информация о файле:");
-            Console.WriteLine($"Наименование - {file.Name}");
-            Console.WriteLine($"Каталог - {file.DirectoryName}");
-            Console.WriteLine($"Создание - {file.CreationTime}");
-            Console.WriteLine($"Последнее изменение - {file.LastWriteTime}");
-            Console.WriteLine($"Размер - {file.Length} байт");
-            Console.WriteLine();
-            Console.WriteLine("Системные атрибуты:");
-            // getSystemAttrFileText(source); // TODO: temporary hide
-            Console.WriteLine();
+            var fileAttributes = new string[]
+            {
+                "Информация о файле:",
+                $"Наименование - {file.Name}",
+                $"Каталог - {file.DirectoryName}",
+                $"Создание - {file.CreationTime}",
+                $"Последнее изменение - {file.LastWriteTime}",
+                $"Размер - {file.Length} байт",
+
+            };
+
+            var fileSystemAttributes = getSystemAttrFileText(source);
+            var info = fileAttributes.Concat(fileSystemAttributes).ToArray();
+
+            // Отобразить информацию в окне
+            InfoFrame.ShowInfoContent(info);
         }
 
         /// <summary>
