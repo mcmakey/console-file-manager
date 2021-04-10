@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace ConsoleFileManager
 {
@@ -10,8 +11,11 @@ namespace ConsoleFileManager
         private int appWindowWidth = Console.LargestWindowWidth;
         private int appWindowHeight = Console.LargestWindowHeight;
 
-        private const int commandFrameHeight = 15;
-        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private const int commandFrameHeight = 5;
+        private const int InfoFrameHeight = 15;
+
+        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
+        private InfoFrame InfoFrame = new InfoFrame(Console.LargestWindowHeight - commandFrameHeight - InfoFrameHeight, InfoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         /*** Конструктор ***/
         public FileManager()
@@ -39,7 +43,9 @@ namespace ConsoleFileManager
 
             // Отрисовка окна командной строки 
             CommandFrame.Dispaly();
-            CommandFrame.ShowTitle("Введите команду ('help - список команд')");
+
+            // Отрисовка окна информации 
+            InfoFrame.Dispaly();
         }
 
         /// <summary>
@@ -61,7 +67,7 @@ namespace ConsoleFileManager
                 @$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path"
             };
 
-            CommandFrame.ShowInfoContent(commandDescriptions);
+            InfoFrame.ShowInfoContent(commandDescriptions);
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
@@ -91,24 +97,32 @@ namespace ConsoleFileManager
         /// <param name="source"></param>
         private void DirectoryInfo(string source)
         {
+            // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                CommandFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
                 return;
             }
 
+            // Получение информации о каталоге
             DirectoryInfo directory = new DirectoryInfo(source);
 
-            Console.WriteLine("Информация о каталоге:");
-            Console.WriteLine($"Наименование: {directory.Name}");
-            Console.WriteLine($"Полное наименование: {directory.FullName}");
-            Console.WriteLine($"Создание: {directory.CreationTime}");
-            Console.WriteLine($"Последнее изменение: {directory.LastWriteTime}");
-            Console.WriteLine($"Корневой каталог: {directory.Root}");
-            Console.WriteLine();
-            Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(source);
-            Console.WriteLine();
+            var directoryAttributes = new string[]
+            {
+                "Информация о каталоге:",
+                $"Наименование: {directory.Name}",
+                $"Полное наименование: {directory.FullName}",
+                $"Создание: {directory.CreationTime}",
+                $"Последнее изменение: {directory.LastWriteTime}",
+                $"Корневой каталог: {directory.Root}"
+            };
+
+            var systemDirectoryAttributes = getSystemAttrFileText(source);
+
+            var info = directoryAttributes.Concat(systemDirectoryAttributes).ToArray();
+
+            // Отобразить информацию в окне
+            InfoFrame.ShowInfoContent(info);
         }
 
         /// <summary>
@@ -117,24 +131,32 @@ namespace ConsoleFileManager
         /// <param name="source"></param>
         private void FileInfo(string source)
         {
+            // Проверка существования файла по укзанному пути
             if (!File.Exists(source))
             {
-                CommandFrame.ShowInfoContent("Файл по указанному пути не найден");
+                InfoFrame.ShowInfoContent("Файл по указанному пути не найден");
                 return;
             }
 
+            // Получение информации о файле
             FileInfo file = new FileInfo(source);
 
-            Console.WriteLine("Информация о файле:");
-            Console.WriteLine($"Наименование - {file.Name}");
-            Console.WriteLine($"Каталог - {file.DirectoryName}");
-            Console.WriteLine($"Создание - {file.CreationTime}");
-            Console.WriteLine($"Последнее изменение - {file.LastWriteTime}");
-            Console.WriteLine($"Размер - {file.Length} байт");
-            Console.WriteLine();
-            Console.WriteLine("Системные атрибуты:");
-            DisplaySystemAttrFile(source);
-            Console.WriteLine();
+            var fileAttributes = new string[]
+            {
+                "Информация о файле:",
+                $"Наименование - {file.Name}",
+                $"Каталог - {file.DirectoryName}",
+                $"Создание - {file.CreationTime}",
+                $"Последнее изменение - {file.LastWriteTime}",
+                $"Размер - {file.Length} байт",
+
+            };
+
+            var fileSystemAttributes = getSystemAttrFileText(source);
+            var info = fileAttributes.Concat(fileSystemAttributes).ToArray();
+
+            // Отобразить информацию в окне
+            InfoFrame.ShowInfoContent(info);
         }
 
         /// <summary>
@@ -144,7 +166,6 @@ namespace ConsoleFileManager
         /// <param name="dest"></param>
         private void Copy(string source, string dest)
         {
-
             // Копировать файл или каталог
             if (Path.HasExtension(source))
             {
@@ -166,7 +187,7 @@ namespace ConsoleFileManager
                 // Проверка наличия исходного файла по указанному пути
                 if (!File.Exists(source))
                 {
-                    CommandFrame.ShowInfoContent("Файл, который нужно скопировать, по указанному пути не найден");
+                    InfoFrame.ShowInfoContent("Файл, который нужно скопировать, по указанному пути не найден");
                     return;
                 }
 
@@ -199,16 +220,16 @@ namespace ConsoleFileManager
                     // Проверка, точно ли файл скопирован
                     if (File.Exists(destFile))
                     {
-                        CommandFrame.ShowInfoContent($"Файл из {source} cкопирован в {dest}");
+                        InfoFrame.ShowInfoContent($"Файл из {source} cкопирован в {dest}");
                     }
                     else
                     {
-                        CommandFrame.ShowInfoContent("Что-то пошло не так. Файл не скопирован");
+                        InfoFrame.ShowInfoContent("Что-то пошло не так. Файл не скопирован");
                     }
                 }
                 catch (Exception e)
                 {
-                    CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
+                    InfoFrame.ShowInfoContent($"The process failed: {e.ToString()}");
                 }
             }
 
@@ -218,10 +239,11 @@ namespace ConsoleFileManager
                 // Проверка что целевой путь - каталог, а не файл
                 if (Path.HasExtension(dest))
                 {
-                    CommandFrame.ShowInfoContent("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
+                    InfoFrame.ShowInfoContent("Не надо копировать каталог в файл, проверьте целевой путь на корректность");
                     return;
                 }
 
+                // Проверка что целевой каталог существует, если нет то создается
                 if (!destination.Exists)
                 {
                     destination.Create();
@@ -245,7 +267,7 @@ namespace ConsoleFileManager
                     CopyDirectory(dir, new DirectoryInfo(destinationDir));
                 }
 
-                CommandFrame.ShowInfoContent($"Каталог из {source} скопирован в {dest}");
+                InfoFrame.ShowInfoContent($"Каталог из {source} скопирован в {dest}");
             }
         }
 
@@ -263,29 +285,29 @@ namespace ConsoleFileManager
 
                     if (!File.Exists(source))
                     {
-                        CommandFrame.ShowInfoContent("Удаляемый Файл, по указанному пути не найден");
+                        InfoFrame.ShowInfoContent("Удаляемый Файл, по указанному пути не найден");
                         return;
                     }
 
                     File.Delete(source);
-                    CommandFrame.ShowInfoContent($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
+                    InfoFrame.ShowInfoContent($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
                 }
                 else
                 {
 
                     if (!Directory.Exists(source))
                     {
-                        CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
+                        InfoFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                         return;
                     }
 
                     Directory.Delete(source, true);
-                    CommandFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
+                    InfoFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
                 }
             }
             catch (Exception e)
             {
-                CommandFrame.ShowInfoContent($"The process failed: {e.ToString()}");
+                InfoFrame.ShowInfoContent($"The process failed: {e.ToString()}");
             }
         }
 
@@ -308,7 +330,6 @@ namespace ConsoleFileManager
             {
                 CommandFrame.CommandLineReady();
                 var command = CommandParser(Console.ReadLine());
-                CommandFrame.CleanInfo();
 
                 switch (command.Name)
                 {
@@ -334,7 +355,7 @@ namespace ConsoleFileManager
                         Remove(command.Source);
                         break;
                     default:
-                        CommandFrame.ShowInfoContent("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
+                        InfoFrame.ShowInfoContent("Некорректный ввод (имя команды или количество/формат аргументов команды), попробуйте еще (см. help)");
                         break;
                 }
             }
@@ -403,91 +424,31 @@ namespace ConsoleFileManager
             }
         }
 
-        private void DisplaySystemAttrFile(string path)
+        /// <summary>
+        /// Метод возвращает текстовый массив системных атрибутов 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string[] getSystemAttrFileText(string path)
         {
             FileAttributes attributes = File.GetAttributes(path);
 
-            Console.Write("Файл является катлогом - ");
-            if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            // Проверка системнго атрибута, возвр. текст (да/нет)
+            string CheckAttrText(FileAttributes attributes, FileAttributes attr)
             {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
+                return (attributes & attr) == attr ? "да" : "нет";
             }
 
-            Console.WriteLine();
-
-            Console.Write("Файл только для чтения - ");
-            if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            return new string[]
             {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл сжат - ");
-            if ((attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл зашифрован - ");
-            if ((attributes & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл скрытый - ");
-            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл является системным - ");
-            if ((attributes & FileAttributes.System) == FileAttributes.System)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
-
-            Console.WriteLine();
-
-            Console.Write("Файл временный - ");
-            if ((attributes & FileAttributes.Temporary) == FileAttributes.Temporary)
-            {
-                Console.Write("да");
-            }
-            else
-            {
-                Console.Write("нет");
-            }
+                $"Файл является каталогом - {CheckAttrText(attributes, FileAttributes.Directory)}",
+                $"Файл только для чтения - {CheckAttrText(attributes, FileAttributes.ReadOnly)}",
+                $"Файл сжат - {CheckAttrText(attributes, FileAttributes.Compressed)}",
+                $"Файл зашифрован - {CheckAttrText(attributes, FileAttributes.Encrypted)}",
+                $"Файл является системным - {CheckAttrText(attributes, FileAttributes.System)}",
+                $"Файл скрытый - {CheckAttrText(attributes, FileAttributes.Hidden)}",
+                $"Файл временный - {CheckAttrText(attributes, FileAttributes.Temporary)}"
+            };
         }
 
         private bool isPathFormatСorrect(string path)

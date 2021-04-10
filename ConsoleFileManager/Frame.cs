@@ -65,12 +65,14 @@ namespace ConsoleFileManager
         /// </summary>
         /// <param name="startLine"></param>
         /// <param name="amountLines"></param>
-        /// <param name="leftOffset"></param>
-        public void CleanLines(int startLine, int numberLinesToClear, int leftOffset = 0)
+        public void Clean()
         {
+            var numberLinesToClear = Height - 2; // 2  - две строки с границей (верхняя и нижняя)
+            var startLine = TopPosition + 1; // Отступаем одну строку сверху (там верхняя граница)
+
             for (int i = 0; i < numberLinesToClear; i++)
             {
-                var currentLine = startLine + i;
+                var currentLine = startLine + i; 
                 Console.SetCursorPosition(leftPosition, currentLine);
                 Console.Write(new String(space, Console.BufferWidth - leftPosition * 2));
             }
