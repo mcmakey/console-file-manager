@@ -93,6 +93,18 @@ namespace ConsoleFileManager
             // Отрисовка дерева каталогов
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
             Tree.Display(rootDirInfo);
+
+
+            // test filsetree
+
+            FilesTree Ttt = new FilesTree(rootDirInfo);
+
+            var ttt = Ttt.Items;
+
+            foreach (var item in ttt)
+            {
+                Console.WriteLine($"{item.Name} {item.IsDirectory.ToString()} {item.Rank}");
+            }
         }
 
         /// <summary>

@@ -13,7 +13,6 @@ namespace ConsoleFileManager
 
             int nextRank;
 
-
             int currentLine = line;
             int nextLine;
 
