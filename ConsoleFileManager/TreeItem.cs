@@ -1,5 +1,8 @@
 ﻿namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Файл (файл или директория) rank - уовень вложенности от указанного корня.
+    /// </summary>
     class TreeItem
     {
         public string Name { get; }

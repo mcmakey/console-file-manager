@@ -87,23 +87,18 @@ namespace ConsoleFileManager
                 return;
             }
 
-            // Очистка окна
-            TreeFrame.Clean();
-
             // Отрисовка дерева каталогов
+            TreeFrame.Clean();
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
-            Tree.Display(rootDirInfo);
+            FilesTree filesTree = new FilesTree(rootDirInfo);
 
+            var files = filesTree.Items;
 
-            // test filsetree
+            Console.SetCursorPosition(0, 2);
 
-            FilesTree Ttt = new FilesTree(rootDirInfo);
-
-            var ttt = Ttt.Items;
-
-            foreach (var item in ttt)
+            foreach (var file in files)
             {
-                Console.WriteLine($"{item.Name} {item.IsDirectory.ToString()} {item.Rank}");
+                Console.WriteLine($"{file.Name} {file.IsDirectory.ToString()} {file.Rank}");
             }
         }
 
