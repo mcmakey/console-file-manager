@@ -2,14 +2,14 @@
 
 namespace ConsoleFileManager
 {
-    class InfoFrame : Frame
+    class FrameInfo : Frame
     {
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="topPosition"></param>
         /// <param name="height"></param>
-        public InfoFrame(int topPosition, int height) : base(topPosition, height)
+        public FrameInfo(int topPosition, int height) : base(topPosition, height)
         {
 
         }

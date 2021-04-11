@@ -12,10 +12,11 @@ namespace ConsoleFileManager
         private int appWindowHeight = Console.LargestWindowHeight;
 
         private const int commandFrameHeight = 5;
-        private const int InfoFrameHeight = 15;
+        private const int infoFrameHeight = 15;
 
-        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
-        private InfoFrame InfoFrame = new InfoFrame(Console.LargestWindowHeight - commandFrameHeight - InfoFrameHeight, InfoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private FrameCommand CommandFrame = new FrameCommand(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
+        private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private FrameTreeFiles TreeFrame  = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         /*** Конструктор ***/
         public FileManager()
@@ -46,6 +47,9 @@ namespace ConsoleFileManager
 
             // Отрисовка окна информации 
             InfoFrame.Dispaly();
+
+            //  Отрисовка окна дерева каталов
+            TreeFrame.Dispaly();
         }
 
         /// <summary>
@@ -83,12 +87,13 @@ namespace ConsoleFileManager
                 return;
             }
 
-            // отображение дерева элементов
-            Console.WriteLine($"List {source}");
-            Console.WriteLine();
-
+            // Отрисовка дерева каталогов
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
-            Tree.Display(rootDirInfo);
+
+
+
+            FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
+            TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items);
         }
 
         /// <summary>

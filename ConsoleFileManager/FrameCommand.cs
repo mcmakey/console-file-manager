@@ -5,14 +5,14 @@ namespace ConsoleFileManager
     /// <summary>
     /// Класс командного окна
     /// </summary>
-    class CommandFrame : Frame
+    class FrameCommand : Frame
     {
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="topPosition"></param>
         /// <param name="height"></param>
-        public CommandFrame(int topPosition, int height) : base(topPosition, height)
+        public FrameCommand(int topPosition, int height) : base(topPosition, height)
         {
             
         }
