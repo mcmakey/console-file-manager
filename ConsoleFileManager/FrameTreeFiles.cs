@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ConsoleFileManager
 {
-    class TreeFrameFiles : Frame
+    class FrameTreeFiles : Frame
     {
-        public TreeFrameFiles(int topPosition, int height) : base(topPosition, height)
+        public FrameTreeFiles(int topPosition, int height) : base(topPosition, height)
         {
 
         }

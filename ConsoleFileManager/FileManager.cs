@@ -14,9 +14,9 @@ namespace ConsoleFileManager
         private const int commandFrameHeight = 5;
         private const int infoFrameHeight = 15;
 
-        private CommandFrame CommandFrame = new CommandFrame(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
-        private InfoFrame InfoFrame = new InfoFrame(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
-        private TreeFrameFiles TreeFrame  = new TreeFrameFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private FrameCommand CommandFrame = new FrameCommand(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
+        private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private FrameTreeFiles TreeFrame  = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         /*** Конструктор ***/
         public FileManager()
