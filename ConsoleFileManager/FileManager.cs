@@ -88,18 +88,9 @@ namespace ConsoleFileManager
             }
 
             // Отрисовка дерева каталогов
-            TreeFrame.Clean();
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
             FilesTree filesTree = new FilesTree(rootDirInfo);
-
-            var files = filesTree.Items;
-
-            Console.SetCursorPosition(0, 2);
-
-            foreach (var file in files)
-            {
-                Console.WriteLine($"{file.Name} {file.IsDirectory.ToString()} {file.Rank}");
-            }
+            TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items);
         }
 
         /// <summary>
