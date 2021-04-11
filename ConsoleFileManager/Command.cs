@@ -25,10 +25,11 @@
         /// <param name="name"></param>
         /// <param name="source"></param>
         /// <param name="page"></param>
-        public Command(string name, string source, int page)
+        public Command(string name, string source, string destination = "", int page = 1)
         {
             this.Name = name;
             this.Source = source;
+            this.Destination = destination;
             this.Page = page;
         }
 

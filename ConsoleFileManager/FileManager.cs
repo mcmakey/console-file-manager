@@ -78,7 +78,7 @@ namespace ConsoleFileManager
         /// Вывод файловой структуры
         /// </summary>
         /// <param name="source"></param>
-        private void List(string source)
+        private void List(string source, int page)
         {
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
@@ -90,10 +90,11 @@ namespace ConsoleFileManager
             // Отрисовка дерева каталогов
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
 
-
-
             FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
             TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items);
+
+            // dev
+            InfoFrame.ShowInfoContent(page.ToString());
         }
 
         /// <summary>
@@ -345,7 +346,7 @@ namespace ConsoleFileManager
                         CloseApp();
                         break;
                     case CommandsNames.List:
-                        List(command.Source);
+                        List(command.Source, command.Page);
                         break;
                     case CommandsNames.DirectoryInfo:
                         DirectoryInfo(command.Source);
@@ -392,24 +393,34 @@ namespace ConsoleFileManager
             string[] args = new string[argsLength];
             Array.Copy(splitValue, argsIndex, args, 0, argsLength);
 
+            // является ли команда команlой с оним аргументом ? 
+            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) ||
+                (commandName == CommandsNames.DirectoryInfo) ||
+                (commandName == CommandsNames.Remove);
 
+            // Комадны без аргументов (помощь, выход)
             if (commandName == CommandsNames.Help || commandName == CommandsNames.Exit)
             {
                 return new Command(commandName);
             }
 
-            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) ||
-                (commandName == CommandsNames.DirectoryInfo) ||
-                (commandName == CommandsNames.Remove);
+            // Команда с "показать дерево файлов" с одним обязательным и одним необязательным аргументами
+            if ((commandName == CommandsNames.List))
+            { 
+                if (args.Length == 1 && isPathFormatСorrect(args[0]))
+                {
+                    return new Command(commandName, args[0]);
+                } else if (args.Length > 1 && isPathFormatСorrect(args[0]) && isPageArgumentCorrect(args[1]))
+                {
+                    return new Command(commandName, args[0], "", Convert.ToInt32(args[1].Replace("-p", ""))); // TODO: Создавать экземпляр команды через дефолтный конструктор, а згачения свойств здавать через dot (тогда не надо будет пустою строку в destinations отправлять)
+                };
+            
+                // если количество аргументов и их формат не соотв. требованиям, то пустая команда - для сообщю об ошибке ввода
+                return new Command(null);
+            };
 
-            if ((commandName == CommandsNames.List) &&
-                args.Length != 0 &&
-                isPathFormatСorrect(args[0])
-            )
-            {
-                return new Command(commandName, args[0]);
-            }
-            else if (isSingleArgumentCommand &&
+            // Команды с одним обязательным аргументом
+            if (isSingleArgumentCommand &&
                 args.Length != 0 &&
                 isPathFormatСorrect(args[0])
             )
@@ -422,11 +433,10 @@ namespace ConsoleFileManager
             )
             {
                 return new Command(commandName, args[0], args[1]);
-            }
-            else
-            {
-                return new Command(null); // TODO: ?
-            }
+            };
+
+            // Пустая команда (для вывода сообщения об ошибке при вводе команды)
+            return new Command(null);
         }
 
         /// <summary>
@@ -456,10 +466,18 @@ namespace ConsoleFileManager
             };
         }
 
+
+        // TODO: объединить в одну функцию и сделать локалной в парсере
         private bool isPathFormatСorrect(string path)
         {
             Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
             return pathRegex.IsMatch(path);
+        }
+
+        private bool isPageArgumentCorrect(string pageArg)
+        {
+            Regex pathRegex = new Regex(@"-p\d+");
+            return pathRegex.IsMatch(pageArg);
         }
     }
 }
