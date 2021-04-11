@@ -20,8 +20,13 @@ namespace ConsoleFileManager
         /// <param name="files"></param>
         public void DisplayTree(string path,  List<FilesTreeItem> files)
         {
+            const string directoryIcon = "■ ";
+            const string indentStep = "  ";
+
             var contentTopPosition = TopPosition + 1;
             var treeCurrentLinePosition = contentTopPosition + 1;
+
+            
             // Очистка экрана
             Clean();
 
@@ -32,8 +37,20 @@ namespace ConsoleFileManager
             // Вывод дерева файлов
             foreach (var file in files)
             {
+                // Отступы для отображения вложенности
+                var indent = "";
+                for (int i = 0; i < file.Rank; i++)
+                {
+                    indent += indentStep;
+                }
+
+                // Иконка (каталога если каталог)
+                var itemIcon = file.IsDirectory ? directoryIcon : null;
+
                 Console.SetCursorPosition(leftPosition, treeCurrentLinePosition);
-                Console.Write($"{file.Name} {file.IsDirectory.ToString()} {file.Rank}");
+
+                Console.Write($"{indent}{itemIcon}{file.Name}");
+
                 treeCurrentLinePosition++;
             }
         }

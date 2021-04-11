@@ -35,7 +35,7 @@ namespace ConsoleFileManager
         /// <param name="root"></param>
         /// <param name="items"></param>
         /// <param name="rank"></param>
-        private void FillItems(DirectoryInfo root, List<FilesTreeItem> items, int rank = 1)
+        private void FillItems(DirectoryInfo root, List<FilesTreeItem> items, int rank = 0)
         {
             int nextRank;
 
