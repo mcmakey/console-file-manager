@@ -44,15 +44,27 @@ namespace ConsoleFileManager
                     indent += indentStep;
                 }
 
+                // Цвет пункта дерева файлов
+                if (file.IsDirectory)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                }
+
                 // Иконка (каталога если каталог)
                 var itemIcon = file.IsDirectory ? directoryIcon : null;
 
+                // Вывод пункта дерева файлов
                 Console.SetCursorPosition(leftPosition, treeCurrentLinePosition);
-
                 Console.Write($"{indent}{itemIcon}{file.Name}");
 
                 treeCurrentLinePosition++;
             }
+
+            Console.ResetColor();
         }
     }
 }
