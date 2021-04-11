@@ -20,10 +20,10 @@ namespace ConsoleFileManager
         /// <summary>
         /// Список файлов входящих в дерево файлов
         /// </summary>
-        public List<TreeItem> Items {
+        public List<FilesTreeItem> Items {
 
             get {
-                var items = new List<TreeItem>();
+                var items = new List<FilesTreeItem>();
                 FillItems(Root, items);
                 return items;
             }
@@ -35,7 +35,7 @@ namespace ConsoleFileManager
         /// <param name="root"></param>
         /// <param name="items"></param>
         /// <param name="rank"></param>
-        private void FillItems(DirectoryInfo root, List<TreeItem> items, int rank = 1)
+        private void FillItems(DirectoryInfo root, List<FilesTreeItem> items, int rank = 1)
         {
             int nextRank;
 
@@ -56,14 +56,14 @@ namespace ConsoleFileManager
             }
 
             // add directory
-            items.Add(new TreeItem(root.Name, true, rank));
+            items.Add(new FilesTreeItem(root.Name, true, rank));
 
             // add file
             if (files != null)
             {
                 foreach (FileInfo fi in files)
                 {
-                    items.Add(new TreeItem(fi.Name, false, rank + 1));
+                    items.Add(new FilesTreeItem(fi.Name, false, rank + 1));
                 }
             }
 
