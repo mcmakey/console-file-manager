@@ -10,11 +10,25 @@ namespace ConsoleFileManager
     /// </summary>
     class FilesTree
     {
+        /// <summary>
+        /// Ссылка на окно информации, для вывода сообщений об искоючениях
+        /// </summary>
+        private FrameInfo Info { get; }
+
+        /// <summary>
+        /// Корневой каталог
+        /// </summary>
         public DirectoryInfo Root { get; }
 
-        public FilesTree(DirectoryInfo root)
+        /// <summary>
+        /// конструктор
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="frameInfo"></param>
+        public FilesTree(DirectoryInfo root, FrameInfo frameInfo)
         {
             this.Root = root;
+            this.Info = frameInfo;
         }
 
         /// <summary>
@@ -48,17 +62,17 @@ namespace ConsoleFileManager
             }
             catch (UnauthorizedAccessException e)
             {
-                Console.WriteLine(e.Message); // TODO infoFrame
+                Info.ShowInfoContent(e.Message);
             }
             catch (DirectoryNotFoundException e)
             {
-                Console.WriteLine(e.Message); // TODO infoFrame
+                Info.ShowInfoContent(e.Message);
             }
 
-            // add directory
+            // Добавление в список каталога
             items.Add(new FilesTreeItem(root.Name, true, rank));
 
-            // add file
+            // Добавление в файла
             if (files != null)
             {
                 foreach (FileInfo fi in files)

@@ -89,7 +89,10 @@ namespace ConsoleFileManager
 
             // Отрисовка дерева каталогов
             DirectoryInfo rootDirInfo = new DirectoryInfo($"{source}");
-            FilesTree filesTree = new FilesTree(rootDirInfo);
+
+
+
+            FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
             TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items);
         }
 

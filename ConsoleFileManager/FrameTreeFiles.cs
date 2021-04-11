@@ -25,7 +25,6 @@ namespace ConsoleFileManager
 
             var contentTopPosition = TopPosition + 1;
             var treeCurrentLinePosition = contentTopPosition + 1;
-
             
             // Очистка экрана
             Clean();
@@ -44,7 +43,7 @@ namespace ConsoleFileManager
                     indent += indentStep;
                 }
 
-                // Цвет пункта дерева файлов
+                // Подсветка типа файла (каталог/файл)
                 if (file.IsDirectory)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
