@@ -6,31 +6,17 @@
     class Command
     {
         public string Name { get; }
-        public string Source { get; }
+        public string Source { get; set; }
         public string Destination { get; }
-        public int Page { get; }
+        public int Page { get; set; }
 
         /// <summary>
-        /// Конструктор для команд без аргументов (Exit, Help)
+        /// Конструктор
         /// </summary>
         /// <param name="name"></param>
         public Command(string name)
         {
             this.Name = name;
-        }
-
-        /// <summary>
-        /// Конструктор для команды List
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="source"></param>
-        /// <param name="page"></param>
-        public Command(string name, string source, string destination = "", int page = 1)
-        {
-            this.Name = name;
-            this.Source = source;
-            this.Destination = destination;
-            this.Page = page;
         }
 
         /// <summary>

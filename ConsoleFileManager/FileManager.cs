@@ -78,7 +78,7 @@ namespace ConsoleFileManager
         /// Вывод файловой структуры
         /// </summary>
         /// <param name="source"></param>
-        private void List(string source, int page)
+        private void List(string source, int page = 1)
         {
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
@@ -409,10 +409,16 @@ namespace ConsoleFileManager
             { 
                 if (args.Length == 1 && isPathFormatСorrect(args[0]))
                 {
-                    return new Command(commandName, args[0]);
+                    Command ListCommand = new Command(CommandsNames.List);
+                    ListCommand.Source = args[0];
+                    ListCommand.Page = 1;
+                    return ListCommand;
                 } else if (args.Length > 1 && isPathFormatСorrect(args[0]) && isPageArgumentCorrect(args[1]))
                 {
-                    return new Command(commandName, args[0], "", Convert.ToInt32(args[1].Replace("-p", ""))); // TODO: Создавать экземпляр команды через дефолтный конструктор, а згачения свойств здавать через dot (тогда не надо будет пустою строку в destinations отправлять)
+                    Command ListCommand = new Command(CommandsNames.List);
+                    ListCommand.Source = args[0];
+                    ListCommand.Page = Convert.ToInt32(args[1].Replace("-p", ""));
+                    return ListCommand;
                 };
             
                 // если количество аргументов и их формат не соотв. требованиям, то пустая команда - для сообщю об ошибке ввода
