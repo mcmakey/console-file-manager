@@ -75,8 +75,16 @@ namespace ConsoleFileManager
                 Console.Write($"{indent}{itemIcon}{files[i].Name}");
 
                 currentLine++;
+                Console.ResetColor();
             }
-            Console.ResetColor();
+
+            // Отобржение текущей/максимальной страниц
+            Console.WriteLine();
+            var paginationInfo = $"Страница {page} из {maxNumberPages}";
+            var xPos = Console.LargestWindowWidth / 2 - paginationInfo.Length / 2;
+            var yPos = Height - contentTopPosition - bottomOffset;
+            Console.SetCursorPosition(xPos, yPos);
+            Console.WriteLine(paginationInfo);
 
             // Лок. методы получения начального/конечного индекса списка файлов для отображения в окне
             int GetStartIndex(int page, int filesCount, int maxLines)
