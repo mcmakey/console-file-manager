@@ -92,9 +92,6 @@ namespace ConsoleFileManager
 
             FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
             TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items, page);
-
-            // dev
-            InfoFrame.ShowInfoContent(page.ToString());
         }
 
         /// <summary>
