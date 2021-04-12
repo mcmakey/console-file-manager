@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleFileManager
 {
@@ -18,14 +17,27 @@ namespace ConsoleFileManager
         /// Отображение дерева файлов
         /// </summary>
         /// <param name="files"></param>
-        public void DisplayTree(string path,  List<FilesTreeItem> files)
+        public void DisplayTree(string path, List<FilesTreeItem> files, int page)
         {
             const string directoryIcon = "■ ";
             const string indentStep = "  ";
+            const int bottomOffset = 1; // Отступ снизу - строка для указания страницы например
 
             var contentTopPosition = TopPosition + 1;
-            var treeCurrentLinePosition = contentTopPosition + 1;
-            
+            var treeTopPosition = contentTopPosition + 1;
+
+            // доступное количество строк во фрейме для отображения дерева
+            var availabelTreeHeight = Height - treeTopPosition - bottomOffset;
+
+            // Параметры для  пагинации
+            var maxNumberPages = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(files.Count) / Convert.ToDecimal(availabelTreeHeight)));
+            if (page > maxNumberPages)
+            {
+                page = maxNumberPages;
+            };
+            var startFilesIndex = GetStartIndex(page, files.Count, availabelTreeHeight);
+            var endFilesIndex = GetEndIndex(page, files.Count, availabelTreeHeight, maxNumberPages);
+
             // Очистка экрана
             Clean();
 
@@ -34,17 +46,19 @@ namespace ConsoleFileManager
             Console.Write($@"{path}:");
 
             // Вывод дерева файлов
-            foreach (var file in files)
+            var currentLine = treeTopPosition;
+
+            for (int i = startFilesIndex; i < endFilesIndex; i++)
             {
                 // Отступы для отображения вложенности
                 var indent = "";
-                for (int i = 0; i < file.Rank; i++)
+                for (int j = 0; j < files[i].Rank; j++)
                 {
                     indent += indentStep;
                 }
 
                 // Подсветка типа файла (каталог/файл)
-                if (file.IsDirectory)
+                if (files[i].IsDirectory)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 }
@@ -54,16 +68,36 @@ namespace ConsoleFileManager
                 }
 
                 // Иконка (каталога если каталог)
-                var itemIcon = file.IsDirectory ? directoryIcon : null;
+                var itemIcon = files[i].IsDirectory ? directoryIcon : null;
 
                 // Вывод пункта дерева файлов
-                Console.SetCursorPosition(leftPosition, treeCurrentLinePosition);
-                Console.Write($"{indent}{itemIcon}{file.Name}");
+                Console.SetCursorPosition(leftPosition, currentLine);
+                Console.Write($"{indent}{itemIcon}{files[i].Name}");
 
-                treeCurrentLinePosition++;
+                currentLine++;
+            }
+            Console.ResetColor();
+
+            // Лок. методы получения начального/конечного индекса списка файлов для отображения в окне
+            int GetStartIndex(int page, int filesCount, int maxLines)
+            {
+                if (filesCount > maxLines && page > 1)
+                {
+                    return maxLines * (page - 1) - 1;
+                } 
+
+                return 0;
             }
 
-            Console.ResetColor();
+            int GetEndIndex(int page, int filesCount, int maxLines, int maxPages)
+            {
+                if (page != maxPages)
+                {
+                    return maxLines * page - 1;
+                }
+
+                return filesCount - 1;
+            }
         }
     }
 }
