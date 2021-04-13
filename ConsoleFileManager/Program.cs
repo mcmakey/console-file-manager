@@ -15,7 +15,6 @@ namespace ConsoleFileManager
             var root = appSettings["root"];
             var file = appSettings["file"];
             FileManager fileManager = new FileManager(root, file);
-            // FileManager fileManager = new FileManager();
             fileManager.Start();
         }
     }

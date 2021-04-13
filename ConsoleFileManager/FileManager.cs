@@ -52,17 +52,22 @@ namespace ConsoleFileManager
             Console.SetWindowSize(appWindowWidth, appWindowHeight);
             Console.SetBufferSize(appWindowWidth, appWindowHeight);
 
+            //  Отрисовка окна дерева каталогов и дерева последнее просмотренное в предыдущем сеансе (если в конфиге есть запись).
+            TreeFrame.Dispaly();
+            if (CurrentRoot != "")
+            {
+                List(CurrentRoot, 1);
+            }
+
+            // Отрисовка окна информации и последнего просмотренного файла в предыдущем сеансе (если в конфиге есть запись).
+            InfoFrame.Dispaly();
+            if (CurrentFile != "")
+            {
+                FileInfo(CurrentFile);
+            }
+
             // Отрисовка окна командной строки 
             CommandFrame.Dispaly();
-
-            // Отрисовка окна информации 
-            InfoFrame.Dispaly();
-
-            //  Отрисовка окна дерева каталов
-            TreeFrame.Dispaly();
-
-            //dev
-            InfoFrame.ShowInfoContent($"{CurrentRoot} {CurrentFile}");
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent($"Каталог по указанному пути {source} не существует.");
                 return;
             }
 
