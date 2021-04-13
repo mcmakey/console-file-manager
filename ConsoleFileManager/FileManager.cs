@@ -78,15 +78,15 @@ namespace ConsoleFileManager
             string[] commandDescriptions =
             {
                 "Список команд:",
-                $"{AppConstants.Help} - Показать список команд",
-                $"{AppConstants.Exit} - Выйти из приложения",
-                @$"{AppConstants.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
-                @$"{AppConstants.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
-                @$"{AppConstants.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
-                @$"{AppConstants.Copy} source destination - копировать файл/каталог из source в destination",
+                $"{AppConstants.Commands.Help} - Показать список команд",
+                $"{AppConstants.Commands.Exit} - Выйти из приложения",
+                @$"{AppConstants.Commands.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
+                @$"{AppConstants.Commands.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
+                @$"{AppConstants.Commands.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
+                @$"{AppConstants.Commands.Copy} source destination - копировать файл/каталог из source в destination",
                 @"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir",
                 @"Пример копирование каталога: cp disk:\source disk:\dest",
-                @$"{AppConstants.Remove} path - удалить файл/каталог находящийся по пути path"
+                @$"{AppConstants.Commands.Remove} path - удалить файл/каталог находящийся по пути path"
             };
 
             InfoFrame.ShowInfoContent(commandDescriptions);
@@ -368,25 +368,25 @@ namespace ConsoleFileManager
 
                 switch (command.Name)
                 {
-                    case AppConstants.Help:
+                    case AppConstants.Commands.Help:
                         Help();
                         break;
-                    case AppConstants.Exit:
+                    case AppConstants.Commands.Exit:
                         CloseApp();
                         break;
-                    case AppConstants.List:
+                    case AppConstants.Commands.List:
                         List(command.Source, command.Page);
                         break;
-                    case AppConstants.DirectoryInfo:
+                    case AppConstants.Commands.DirectoryInfo:
                         DirectoryInfo(command.Source);
                         break;
-                    case AppConstants.FileInfo:
+                    case AppConstants.Commands.FileInfo:
                         FileInfo(command.Source);
                         break;
-                    case AppConstants.Copy:
+                    case AppConstants.Commands.Copy:
                         Copy(command.Source, command.Destination);
                         break;
-                    case AppConstants.Remove:
+                    case AppConstants.Commands.Remove:
                         Remove(command.Source);
                         break;
                     default:
@@ -423,28 +423,28 @@ namespace ConsoleFileManager
             Array.Copy(splitValue, argsIndex, args, 0, argsLength);
 
             // является ли команда команlой с оним аргументом ? 
-            var isSingleArgumentCommand = (commandName == AppConstants.FileInfo) ||
-                (commandName == AppConstants.DirectoryInfo) ||
-                (commandName == AppConstants.Remove);
+            var isSingleArgumentCommand = (commandName == AppConstants.Commands.FileInfo) ||
+                (commandName == AppConstants.Commands.DirectoryInfo) ||
+                (commandName == AppConstants.Commands.Remove);
 
             // Комадны без аргументов (помощь, выход)
-            if (commandName == AppConstants.Help || commandName == AppConstants.Exit)
+            if (commandName == AppConstants.Commands.Help || commandName == AppConstants.Commands.Exit)
             {
                 return new Command(commandName);
             }
 
             // Команда с "показать дерево файлов" с одним обязательным и одним необязательным аргументами
-            if ((commandName == AppConstants.List))
+            if ((commandName == AppConstants.Commands.List))
             { 
                 if (args.Length == 1 && isPathFormatСorrect(args[0]))
                 {
-                    Command ListCommand = new Command(AppConstants.List);
+                    Command ListCommand = new Command(AppConstants.Commands.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = 1;
                     return ListCommand;
                 } else if (args.Length > 1 && isPathFormatСorrect(args[0]) && isPageArgumentCorrect(args[1]))
                 {
-                    Command ListCommand = new Command(AppConstants.List);
+                    Command ListCommand = new Command(AppConstants.Commands.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = Convert.ToInt32(args[1].Replace("-p", ""));
                     return ListCommand;
@@ -462,7 +462,7 @@ namespace ConsoleFileManager
             {
                 return new Command(commandName, args[0]);
             }
-            else if ((commandName == AppConstants.Copy) &&
+            else if ((commandName == AppConstants.Commands.Copy) &&
                 args.Length == 2 &&
                 (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1]))
             )
