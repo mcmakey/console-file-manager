@@ -17,7 +17,7 @@ namespace ConsoleFileManager
 
         private FrameCommand CommandFrame = new FrameCommand(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
         private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
-        private FrameTreeFiles TreeFrame  = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private FrameTreeFiles TreeFrame = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
         private string CurrentRoot { get; set; }
         private string CurrentFile { get; set; }
@@ -409,6 +409,8 @@ namespace ConsoleFileManager
             const string delimiter = "[ ]+";
             const int nameIndex = 0;
             const int argsIndex = 1;
+            const string pathPattern = @"([A-Z,a-z]:)?\\.*";
+            const string pageArgumentPattern = @"-p\d+";
 
             // массив строковых значений из строки ввода
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
@@ -435,21 +437,24 @@ namespace ConsoleFileManager
 
             // Команда с "показать дерево файлов" с одним обязательным и одним необязательным аргументами
             if ((commandName == AppConstants.Commands.List))
-            { 
-                if (args.Length == 1 && isPathFormatСorrect(args[0]))
+            {
+                if (args.Length == 1 && CheckMatchesPattern(args[0], pathPattern))
                 {
                     Command ListCommand = new Command(AppConstants.Commands.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = 1;
                     return ListCommand;
-                } else if (args.Length > 1 && isPathFormatСorrect(args[0]) && isPageArgumentCorrect(args[1]))
+                }
+                else if (args.Length > 1 &&
+                  CheckMatchesPattern(args[0], pathPattern) &&
+                  CheckMatchesPattern(args[1], pageArgumentPattern))
                 {
                     Command ListCommand = new Command(AppConstants.Commands.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = Convert.ToInt32(args[1].Replace("-p", ""));
                     return ListCommand;
                 };
-            
+
                 // если количество аргументов и их формат не соотв. требованиям, то пустая команда - для сообщю об ошибке ввода
                 return new Command(null);
             };
@@ -457,14 +462,15 @@ namespace ConsoleFileManager
             // Команды с одним обязательным аргументом
             if (isSingleArgumentCommand &&
                 args.Length != 0 &&
-                isPathFormatСorrect(args[0])
+                CheckMatchesPattern(args[0], pathPattern)
             )
             {
                 return new Command(commandName, args[0]);
             }
             else if ((commandName == AppConstants.Commands.Copy) &&
                 args.Length == 2 &&
-                (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1]))
+                CheckMatchesPattern(args[0], pathPattern) && 
+                CheckMatchesPattern(args[1], pathPattern)
             )
             {
                 return new Command(commandName, args[0], args[1]);
@@ -472,6 +478,13 @@ namespace ConsoleFileManager
 
             // Пустая команда (для вывода сообщения об ошибке при вводе команды)
             return new Command(null);
+
+            // Локальный метод проверки соответсвия строки зданнаму шаблону
+            bool CheckMatchesPattern(string text, string pattern)
+            {
+                Regex pathRegex = new Regex(pattern);
+                return pathRegex.IsMatch(text);
+            }
         }
 
         /// <summary>
@@ -501,21 +514,7 @@ namespace ConsoleFileManager
             };
         }
 
-
-        // TODO: объединить в одну функцию и сделать локальной в парсере
-        private bool isPathFormatСorrect(string path)
-        {
-            Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
-            return pathRegex.IsMatch(path);
-        }
-
-        private bool isPageArgumentCorrect(string pageArg)
-        {
-            Regex pathRegex = new Regex(@"-p\d+");
-            return pathRegex.IsMatch(pageArg);
-        }
-
-        //
+        // 
         private void UpdateAppSettings(string key, string value)
         {
             try
