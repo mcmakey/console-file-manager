@@ -9,15 +9,19 @@ namespace ConsoleFileManager
 {
     class FileManager
     {
-        private int appWindowWidth = Console.LargestWindowWidth;
-        private int appWindowHeight = Console.LargestWindowHeight;
+        private static int appWindowWidth = Console.LargestWindowWidth;
+        private static int appWindowHeight = Console.LargestWindowHeight;
 
         private const int commandFrameHeight = 5;
         private const int infoFrameHeight = 15;
+        private static int TreeFrameHeight = appWindowHeight - commandFrameHeight - infoFrameHeight;
 
-        private FrameCommand CommandFrame = new FrameCommand(Console.LargestWindowHeight - commandFrameHeight - 1, commandFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное // хз но -1 нужно чтобы clean не стирал последнюю строку
-        private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
-        private FrameTreeFiles TreeFrame = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
+        private static int commandFrameTopPosition = appWindowHeight - commandFrameHeight - 1;
+        private static int infoFrameTopPosition = appWindowHeight - commandFrameHeight - infoFrameHeight;
+
+        private FrameCommand CommandFrame = new FrameCommand(commandFrameTopPosition, commandFrameHeight);
+        private FrameInfo InfoFrame = new FrameInfo(infoFrameTopPosition, infoFrameHeight);
+        private FrameTreeFiles TreeFrame = new FrameTreeFiles(0, TreeFrameHeight);
 
         private string CurrentRoot { get; set; }
         private string CurrentFile { get; set; }
