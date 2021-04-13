@@ -79,8 +79,8 @@ namespace ConsoleFileManager
             {
                 "Список команд:",
                 $"{AppConstants.Commands.Help} - Показать список команд",
-                $"{AppConstants.Commands.Exit} - Выйти из приложения",
-                @$"{AppConstants.Commands.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
+                @$"{AppConstants.Commands.Exit} - Выйти из приложения",
+                @$"{AppConstants.Commands.List} path {AppConstants.Commands.ListPageArgument}<number> - Отобразить файловую структуру в каталоге находящемся по пути path, {AppConstants.Commands.ListPageArgument} - отобразить страницу этой структуры номером number ({AppConstants.Commands.List} Disk:\source {AppConstants.Commands.ListPageArgument}2)",
                 @$"{AppConstants.Commands.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
                 @$"{AppConstants.Commands.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
                 @$"{AppConstants.Commands.Copy} source destination - копировать файл/каталог из source в destination",
@@ -410,7 +410,8 @@ namespace ConsoleFileManager
             const int nameIndex = 0;
             const int argsIndex = 1;
             const string pathPattern = @"([A-Z,a-z]:)?\\.*";
-            const string pageArgumentPattern = @"-p\d+";
+
+            var pageArgumentPattern = @$"{AppConstants.Commands.ListPageArgument}\d+";
 
             // массив строковых значений из строки ввода
             string[] splitValue = Regex.Split(value.Trim(charToTrim), delimiter);
@@ -451,7 +452,7 @@ namespace ConsoleFileManager
                 {
                     Command ListCommand = new Command(AppConstants.Commands.List);
                     ListCommand.Source = args[0];
-                    ListCommand.Page = Convert.ToInt32(args[1].Replace("-p", ""));
+                    ListCommand.Page = Convert.ToInt32(args[1].Replace(AppConstants.Commands.ListPageArgument, ""));
                     return ListCommand;
                 };
 

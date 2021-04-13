@@ -7,6 +7,7 @@
             public const string Help = "help";
             public const string Exit = "ex";
             public const string List = "ls";
+            public const string ListPageArgument = "-p";
             public const string DirectoryInfo = "dir";
             public const string FileInfo = "file";
             public const string Copy = "cp";
