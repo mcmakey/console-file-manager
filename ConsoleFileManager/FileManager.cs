@@ -80,13 +80,11 @@ namespace ConsoleFileManager
                 "Список команд:",
                 $"{AppConstants.Commands.Help} - Показать список команд",
                 @$"{AppConstants.Commands.Exit} - Выйти из приложения",
-                @$"{AppConstants.Commands.List} path {AppConstants.Commands.ListPageArgument}<number> - Отобразить файловую структуру в каталоге находящемся по пути path, {AppConstants.Commands.ListPageArgument} - отобразить страницу этой структуры номером number ({AppConstants.Commands.List} Disk:\source {AppConstants.Commands.ListPageArgument}2)",
-                @$"{AppConstants.Commands.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
-                @$"{AppConstants.Commands.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
-                @$"{AppConstants.Commands.Copy} source destination - копировать файл/каталог из source в destination",
-                @"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir",
-                @"Пример копирование каталога: cp disk:\source disk:\dest",
-                @$"{AppConstants.Commands.Remove} path - удалить файл/каталог находящийся по пути path"
+                @$"{AppConstants.Commands.List} -  Отобразить файловую структуру в каталоге, {AppConstants.Commands.ListPageArgument} - отобразить конкректную страницу этой структуры ({AppConstants.Commands.List} Disk:\source {AppConstants.Commands.ListPageArgument}<number>)",
+                @$"{AppConstants.Commands.FileInfo} - Отобразить информацию о файле ({AppConstants.Commands.FileInfo} Disk:\source\file)",
+                @$"{AppConstants.Commands.DirectoryInfo} - Отобразить информацию о каталоге ({AppConstants.Commands.DirectoryInfo} Disk:\source)",
+                @$"{AppConstants.Commands.Copy} - копировать файл/каталог из в ({AppConstants.Commands.Copy} Disk:\source Disk:\dest)",
+                @$"{AppConstants.Commands.Remove} - удалить файл/каталог ({AppConstants.Commands.Remove} Disk:\source)"
             };
 
             InfoFrame.ShowInfoContent(commandDescriptions);
