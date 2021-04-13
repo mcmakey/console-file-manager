@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Configuration;
 
 namespace ConsoleFileManager
 {
@@ -11,7 +11,11 @@ namespace ConsoleFileManager
 
         static void AppInit()
         {
-            FileManager fileManager = new FileManager();
+            var appSettings = ConfigurationManager.AppSettings;
+            var root = appSettings[AppConstants.ConfigKeys.LastRoot];
+            var file = appSettings[AppConstants.ConfigKeys.LastFile];
+
+            FileManager fileManager = new FileManager(root, file);
             fileManager.Start();
         }
     }

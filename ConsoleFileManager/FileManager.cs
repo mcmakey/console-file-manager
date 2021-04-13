@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Configuration;
 
 namespace ConsoleFileManager
 {
@@ -18,10 +19,19 @@ namespace ConsoleFileManager
         private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
         private FrameTreeFiles TreeFrame  = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
+        private string CurrentRoot { get; set; }
+        private string CurrentFile { get; set; }
+
         /*** Конструктор ***/
         public FileManager()
         {
 
+        }
+
+        public FileManager(string root = "", string file = "")
+        {
+            this.CurrentRoot = root;
+            this.CurrentFile = file;
         }
 
         /*** Публичные методы ***/
@@ -42,14 +52,22 @@ namespace ConsoleFileManager
             Console.SetWindowSize(appWindowWidth, appWindowHeight);
             Console.SetBufferSize(appWindowWidth, appWindowHeight);
 
+            //  Отрисовка окна дерева каталогов и дерева последнее просмотренное в предыдущем сеансе (если в конфиге есть запись).
+            TreeFrame.Dispaly();
+            if (CurrentRoot != "")
+            {
+                List(CurrentRoot, 1);
+            }
+
+            // Отрисовка окна информации и последнего просмотренного файла в предыдущем сеансе (если в конфиге есть запись).
+            InfoFrame.Dispaly();
+            if (CurrentFile != "")
+            {
+                FileInfo(CurrentFile);
+            }
+
             // Отрисовка окна командной строки 
             CommandFrame.Dispaly();
-
-            // Отрисовка окна информации 
-            InfoFrame.Dispaly();
-
-            //  Отрисовка окна дерева каталов
-            TreeFrame.Dispaly();
         }
 
         /// <summary>
@@ -60,15 +78,15 @@ namespace ConsoleFileManager
             string[] commandDescriptions =
             {
                 "Список команд:",
-                $"{CommandsNames.Help} - Показать список команд",
-                $"{CommandsNames.Exit} - Выйти из приложения",
-                @$"{CommandsNames.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
-                @$"{CommandsNames.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
-                @$"{CommandsNames.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
-                @$"{CommandsNames.Copy} source destination - копировать файл/каталог из source в destination",
+                $"{AppConstants.Help} - Показать список команд",
+                $"{AppConstants.Exit} - Выйти из приложения",
+                @$"{AppConstants.List} path - Отобразить файловую структуру в каталоге находящемся по пути path (ls Disk:\source)",
+                @$"{AppConstants.FileInfo} path - Отобразить информацию о файле находящемся по пути path (file Disk:\source\file)",
+                @$"{AppConstants.DirectoryInfo} path - Отобразить информацию о каталоге находящемся по пути path (dir Disk:\source)",
+                @$"{AppConstants.Copy} source destination - копировать файл/каталог из source в destination",
                 @"Пример копирование файлов: cp disk:\sourcefile.ext disk:\destfile.ext или cp disk:\sourcefile.ext disk:\destdir",
                 @"Пример копирование каталога: cp disk:\source disk:\dest",
-                @$"{CommandsNames.Remove} path - удалить файл/каталог находящийся по пути path"
+                @$"{AppConstants.Remove} path - удалить файл/каталог находящийся по пути path"
             };
 
             InfoFrame.ShowInfoContent(commandDescriptions);
@@ -83,7 +101,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent($"Каталог по указанному пути {source} не существует.");
                 return;
             }
 
@@ -93,8 +111,8 @@ namespace ConsoleFileManager
             FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
             TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items, page);
 
-            // dev
-            InfoFrame.ShowInfoContent(page.ToString());
+            // Сохранить значение текущего корневого каталога дерева 
+            CurrentRoot = source;
         }
 
         /// <summary>
@@ -106,7 +124,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent($"Каталог по указанному пути {source} не существует");
                 return;
             }
 
@@ -129,6 +147,9 @@ namespace ConsoleFileManager
 
             // Отобразить информацию в окне
             InfoFrame.ShowInfoContent(info);
+
+            // Сохранить значение о текущем корневом каталоге
+            CurrentRoot = source;
         }
 
         /// <summary>
@@ -140,7 +161,7 @@ namespace ConsoleFileManager
             // Проверка существования файла по укзанному пути
             if (!File.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Файл по указанному пути не найден");
+                InfoFrame.ShowInfoContent($"Файл по указанному пути {source} не найден");
                 return;
             }
 
@@ -163,6 +184,9 @@ namespace ConsoleFileManager
 
             // Отобразить информацию в окне
             InfoFrame.ShowInfoContent(info);
+
+            // Сохранить значение последнего файла о котором запрашивалась информация 
+            CurrentFile = source;
         }
 
         /// <summary>
@@ -322,6 +346,11 @@ namespace ConsoleFileManager
         /// </summary>
         private void CloseApp()
         {
+            // Сохранить информацию в конфиг о текущем корневом каталоге и последнем просмотретнном файле
+            UpdateAppSettings(AppConstants.ConfigKeys.LastRoot, CurrentRoot);
+            UpdateAppSettings(AppConstants.ConfigKeys.LastFile, CurrentFile);
+
+            // Завершить
             Process.GetCurrentProcess().Kill();
         }
 
@@ -339,25 +368,25 @@ namespace ConsoleFileManager
 
                 switch (command.Name)
                 {
-                    case CommandsNames.Help:
+                    case AppConstants.Help:
                         Help();
                         break;
-                    case CommandsNames.Exit:
+                    case AppConstants.Exit:
                         CloseApp();
                         break;
-                    case CommandsNames.List:
+                    case AppConstants.List:
                         List(command.Source, command.Page);
                         break;
-                    case CommandsNames.DirectoryInfo:
+                    case AppConstants.DirectoryInfo:
                         DirectoryInfo(command.Source);
                         break;
-                    case CommandsNames.FileInfo:
+                    case AppConstants.FileInfo:
                         FileInfo(command.Source);
                         break;
-                    case CommandsNames.Copy:
+                    case AppConstants.Copy:
                         Copy(command.Source, command.Destination);
                         break;
-                    case CommandsNames.Remove:
+                    case AppConstants.Remove:
                         Remove(command.Source);
                         break;
                     default:
@@ -394,28 +423,28 @@ namespace ConsoleFileManager
             Array.Copy(splitValue, argsIndex, args, 0, argsLength);
 
             // является ли команда команlой с оним аргументом ? 
-            var isSingleArgumentCommand = (commandName == CommandsNames.FileInfo) ||
-                (commandName == CommandsNames.DirectoryInfo) ||
-                (commandName == CommandsNames.Remove);
+            var isSingleArgumentCommand = (commandName == AppConstants.FileInfo) ||
+                (commandName == AppConstants.DirectoryInfo) ||
+                (commandName == AppConstants.Remove);
 
             // Комадны без аргументов (помощь, выход)
-            if (commandName == CommandsNames.Help || commandName == CommandsNames.Exit)
+            if (commandName == AppConstants.Help || commandName == AppConstants.Exit)
             {
                 return new Command(commandName);
             }
 
             // Команда с "показать дерево файлов" с одним обязательным и одним необязательным аргументами
-            if ((commandName == CommandsNames.List))
+            if ((commandName == AppConstants.List))
             { 
                 if (args.Length == 1 && isPathFormatСorrect(args[0]))
                 {
-                    Command ListCommand = new Command(CommandsNames.List);
+                    Command ListCommand = new Command(AppConstants.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = 1;
                     return ListCommand;
                 } else if (args.Length > 1 && isPathFormatСorrect(args[0]) && isPageArgumentCorrect(args[1]))
                 {
-                    Command ListCommand = new Command(CommandsNames.List);
+                    Command ListCommand = new Command(AppConstants.List);
                     ListCommand.Source = args[0];
                     ListCommand.Page = Convert.ToInt32(args[1].Replace("-p", ""));
                     return ListCommand;
@@ -433,7 +462,7 @@ namespace ConsoleFileManager
             {
                 return new Command(commandName, args[0]);
             }
-            else if ((commandName == CommandsNames.Copy) &&
+            else if ((commandName == AppConstants.Copy) &&
                 args.Length == 2 &&
                 (isPathFormatСorrect(args[0]) && isPathFormatСorrect(args[1]))
             )
@@ -473,7 +502,7 @@ namespace ConsoleFileManager
         }
 
 
-        // TODO: объединить в одну функцию и сделать локалной в парсере
+        // TODO: объединить в одну функцию и сделать локальной в парсере
         private bool isPathFormatСorrect(string path)
         {
             Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
@@ -484,6 +513,32 @@ namespace ConsoleFileManager
         {
             Regex pathRegex = new Regex(@"-p\d+");
             return pathRegex.IsMatch(pageArg);
+        }
+
+        //
+        private void UpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                InfoFrame.ShowInfoContent("Произошла ошибка записи настроек");
+            }
         }
     }
 }
