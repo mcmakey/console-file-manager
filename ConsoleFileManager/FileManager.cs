@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Configuration;
 
 namespace ConsoleFileManager
 {
@@ -18,10 +19,19 @@ namespace ConsoleFileManager
         private FrameInfo InfoFrame = new FrameInfo(Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight, infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
         private FrameTreeFiles TreeFrame  = new FrameTreeFiles(0, Console.LargestWindowHeight - commandFrameHeight - infoFrameHeight); // TODO: Console.LargestWindowHeight => appWindowHeight getter наверное
 
+        private string CurrentRoot { get; set; }
+        private string CurrentFile { get; set; }
+
         /*** Конструктор ***/
         public FileManager()
         {
 
+        }
+
+        public FileManager(string root = "", string file = "")
+        {
+            this.CurrentRoot = root;
+            this.CurrentFile = file;
         }
 
         /*** Публичные методы ***/
@@ -50,6 +60,9 @@ namespace ConsoleFileManager
 
             //  Отрисовка окна дерева каталов
             TreeFrame.Dispaly();
+
+            //dev
+            InfoFrame.ShowInfoContent($"{CurrentRoot} {CurrentFile}");
         }
 
         /// <summary>
@@ -92,6 +105,9 @@ namespace ConsoleFileManager
 
             FilesTree filesTree = new FilesTree(rootDirInfo, InfoFrame);
             TreeFrame.DisplayTree(rootDirInfo.FullName, filesTree.Items, page);
+
+            // Сохранить значение текущего корневого каталога дерева 
+            CurrentRoot = source;
         }
 
         /// <summary>
@@ -103,7 +119,7 @@ namespace ConsoleFileManager
             // Проверка существования каталога по укзанному пути
             if (!Directory.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Каталог по указанному пути не существует");
+                InfoFrame.ShowInfoContent($"Каталог по указанному пути {source} не существует");
                 return;
             }
 
@@ -126,6 +142,9 @@ namespace ConsoleFileManager
 
             // Отобразить информацию в окне
             InfoFrame.ShowInfoContent(info);
+
+            // Сохранить значение о текущем корневом каталоге
+            CurrentRoot = source;
         }
 
         /// <summary>
@@ -137,7 +156,7 @@ namespace ConsoleFileManager
             // Проверка существования файла по укзанному пути
             if (!File.Exists(source))
             {
-                InfoFrame.ShowInfoContent("Файл по указанному пути не найден");
+                InfoFrame.ShowInfoContent($"Файл по указанному пути {source} не найден");
                 return;
             }
 
@@ -160,6 +179,9 @@ namespace ConsoleFileManager
 
             // Отобразить информацию в окне
             InfoFrame.ShowInfoContent(info);
+
+            // Сохранить значение последнего файла о котором запрашивалась информация 
+            CurrentFile = source;
         }
 
         /// <summary>
@@ -319,6 +341,11 @@ namespace ConsoleFileManager
         /// </summary>
         private void CloseApp()
         {
+            // Сохранить информацию в конфиг о текущем корневом каталоге и последнем просмотретнном файле
+            UpdateAppSettings("root", CurrentRoot);
+            UpdateAppSettings("file", CurrentFile);
+
+            // Завершить
             Process.GetCurrentProcess().Kill();
         }
 
@@ -470,7 +497,7 @@ namespace ConsoleFileManager
         }
 
 
-        // TODO: объединить в одну функцию и сделать локалной в парсере
+        // TODO: объединить в одну функцию и сделать локальной в парсере
         private bool isPathFormatСorrect(string path)
         {
             Regex pathRegex = new Regex(@"([A-Z,a-z]:)?\\.*");
@@ -481,6 +508,32 @@ namespace ConsoleFileManager
         {
             Regex pathRegex = new Regex(@"-p\d+");
             return pathRegex.IsMatch(pageArg);
+        }
+
+        //
+        private void UpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                InfoFrame.ShowInfoContent("Произошла ошибка записи настроек");
+            }
         }
     }
 }
