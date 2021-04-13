@@ -24,7 +24,7 @@ namespace ConsoleFileManager
             Clean();
 
             // Отображение нового сообщения 
-            var infoTopPosition = TopPosition + 1; // TODO: getter/setter
+            var infoTopPosition = TopPosition + 1;
             Console.SetCursorPosition(leftPosition, infoTopPosition);
 
             for (int i = 0; i < info.Length; i++)
@@ -44,7 +44,7 @@ namespace ConsoleFileManager
             Clean();
 
             // Отображение нового сообщения
-            var infoTopPosition = TopPosition + 1; // TODO: getter/setter
+            var infoTopPosition = TopPosition + 1;
             Console.SetCursorPosition(leftPosition, infoTopPosition);
 
             Console.WriteLine(info);
