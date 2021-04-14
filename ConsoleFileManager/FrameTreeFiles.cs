@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ConsoleFileManager
 {
     /// <summary>
-    /// Окно дерева файлов
+    /// Фрейм дерева файлов (наследует класс "Frame")
     /// </summary>
     class FrameTreeFiles : Frame
     {

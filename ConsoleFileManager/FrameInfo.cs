@@ -2,6 +2,9 @@
 
 namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Фрейм информации (наследует класс "Frame")
+    /// </summary>
     class FrameInfo : Frame
     {
         /// <summary>
