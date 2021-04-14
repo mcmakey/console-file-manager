@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Configuration;
 
 namespace ConsoleFileManager
 {
@@ -6,7 +6,22 @@ namespace ConsoleFileManager
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Console File Manager!");
+            AppInit();
+        }
+
+        /// <summary>
+        /// Инициализация приложения
+        /// </summary>
+        static void AppInit()
+        {
+            // получение данных из конфига
+            var appSettings = ConfigurationManager.AppSettings;
+            var root = appSettings[AppConstants.ConfigKeys.LastRoot];
+            var file = appSettings[AppConstants.ConfigKeys.LastFile];
+
+            // создание экземпляра класса приложения и его запуск.
+            FileManager fileManager = new FileManager(root, file);
+            fileManager.Start();
         }
     }
 }
