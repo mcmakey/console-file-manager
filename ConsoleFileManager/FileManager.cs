@@ -242,6 +242,9 @@ namespace ConsoleFileManager
                 CopyDirectory(sourceDir, destinationDir);
             }
 
+            // Отображение актуального дерева файловой системы
+            List(CurrentRoot);
+
             // локальный метод копирования файла
             void CopyFile(string source, string dest)
             {
@@ -350,8 +353,12 @@ namespace ConsoleFileManager
                         return;
                     }
 
+                    // удаление файла
                     File.Delete(source);
                     InfoFrame.ShowInfoContent($"Файл {Path.GetFileName(source)} из каталога {Path.GetDirectoryName(source)} удален");
+
+                    // Отображение актуального дерева файловой системы
+                    List(CurrentRoot);
                 }
                 else
                 {
@@ -362,8 +369,12 @@ namespace ConsoleFileManager
                         return;
                     }
 
+                    // Удаление каталога
                     Directory.Delete(source, true);
-                    InfoFrame.ShowInfoContent("Удаляемый каталог, по указанному пути не найден");
+                    InfoFrame.ShowInfoContent($"Каталог {source} удален");
+
+                    // Отображение актуального дерева файловой системы
+                    List(CurrentRoot);
                 }
             }
             catch (Exception e)
