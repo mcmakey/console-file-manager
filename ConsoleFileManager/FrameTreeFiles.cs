@@ -104,7 +104,7 @@ namespace ConsoleFileManager
                     return maxLines * page - 1;
                 }
 
-                return filesCount - 1;
+                return filesCount;
             }
         }
     }
