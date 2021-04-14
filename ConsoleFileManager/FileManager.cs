@@ -328,7 +328,7 @@ namespace ConsoleFileManager
                     CopyDirectory(dir, new DirectoryInfo(destinationDir));
                 }
 
-                InfoFrame.ShowInfoContent($"Каталог из {source} скопирован в {dest}");
+                InfoFrame.ShowInfoContent($"Содержимое каталога {source} скопировано в {dest}");
             }
         }
 
