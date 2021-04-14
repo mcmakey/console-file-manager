@@ -1,7 +1,13 @@
 ﻿namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Константы приложения
+    /// </summary>
     public static class AppConstants
     {
+        /// <summary>
+        /// Наименования команд
+        /// </summary>
         public static class Commands
         {
             public const string Help = "help";
@@ -14,6 +20,9 @@
             public const string Remove = "rm";
         }
 
+        /// <summary>
+        /// Имена ключей конфига
+        /// </summary>
         public static class ConfigKeys
         {
             public const string LastRoot = "root";
