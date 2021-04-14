@@ -32,7 +32,7 @@ namespace ConsoleFileManager
 
         }
 
-        public FileManager(string root = "", string file = "")
+        public FileManager(string root, string file)
         {
             this.CurrentRoot = root;
             this.CurrentFile = file;
@@ -58,14 +58,14 @@ namespace ConsoleFileManager
 
             //  Отрисовка окна дерева каталогов и дерева последнее просмотренное в предыдущем сеансе (если в конфиге есть запись).
             TreeFrame.Dispaly();
-            if (CurrentRoot != "")
+            if (!String.IsNullOrWhiteSpace(CurrentRoot))
             {
                 List(CurrentRoot, 1);
             }
 
             // Отрисовка окна информации и последнего просмотренного файла в предыдущем сеансе (если в конфиге есть запись).
             InfoFrame.Dispaly();
-            if (CurrentFile != "")
+            if (!String.IsNullOrWhiteSpace(CurrentFile))
             {
                 FileInfo(CurrentFile);
             }
@@ -163,7 +163,9 @@ namespace ConsoleFileManager
             // Проверка существования файла по укзанному пути
             if (!File.Exists(source))
             {
+                
                 InfoFrame.ShowInfoContent($"Файл по указанному пути {source} не найден");
+                Console.WriteLine(source);
                 return;
             }
 
