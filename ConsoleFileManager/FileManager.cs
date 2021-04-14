@@ -7,8 +7,13 @@ using System.Configuration;
 
 namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Класс приложения
+    /// </summary>
     class FileManager
     {
+
+        // Парамеры фреймов приложения
         private static int appWindowWidth = Console.LargestWindowWidth;
         private static int appWindowHeight = Console.LargestWindowHeight;
 
@@ -19,19 +24,34 @@ namespace ConsoleFileManager
         private static int commandFrameTopPosition = appWindowHeight - commandFrameHeight - 1;
         private static int infoFrameTopPosition = appWindowHeight - commandFrameHeight - infoFrameHeight;
 
+        // Инициализация фреймов приложения (командной строки, информации, файловой структуры)
         private FrameCommand CommandFrame = new FrameCommand(commandFrameTopPosition, commandFrameHeight);
         private FrameInfo InfoFrame = new FrameInfo(infoFrameTopPosition, infoFrameHeight);
         private FrameTreeFiles TreeFrame = new FrameTreeFiles(0, TreeFrameHeight);
 
+        /// <summary>
+        /// Текущий корневой каталог для отображения файловой структуры
+        /// </summary>
         private string CurrentRoot { get; set; }
-        private string CurrentFile { get; set; }
 
-        /*** Конструктор ***/
+        /// <summary>
+        /// Последний файл, о котором запрашивалась информация
+        /// </summary>
+        private string CurrentFile { get; set; }
+        
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public FileManager()
         {
 
         }
 
+        /// <summary>
+        /// Конструктор с параметрами текущих корневого каталога и файла (из конфига)
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="file"></param>
         public FileManager(string root, string file)
         {
             this.CurrentRoot = root;
@@ -41,6 +61,8 @@ namespace ConsoleFileManager
         /*** Публичные методы ***/
         /// <summary>
         /// Начало работы класса
+        /// Отображение приложения
+        /// Запуск командной строки
         /// </summary>
         public void Start()
         {
@@ -50,6 +72,11 @@ namespace ConsoleFileManager
 
         /*** Приватные методы ***/
 
+        /// <summary>
+        /// Отображение приложения: 
+        /// отображение окна приложения и фреймов приложения - командной строки, информации, дерева файлов.
+        /// отображение (если есть) последнего файла и последнего дерева файлов - информация из конфига.
+        /// </summary>
         private void Display()
         {
             // Установка размеров окна приложения
@@ -358,7 +385,6 @@ namespace ConsoleFileManager
             Process.GetCurrentProcess().Kill();
         }
 
-        /////////////
 
         /// <summary>
         /// командная строка приложения
@@ -400,7 +426,7 @@ namespace ConsoleFileManager
             }
         }
 
-        ///////////// helpers
+        /***Helpers***/
 
         /// <summary>
         /// Парсит введенное занчение в комадной строке и возвращает экземпляр класса "Command"
@@ -429,7 +455,7 @@ namespace ConsoleFileManager
             string[] args = new string[argsLength];
             Array.Copy(splitValue, argsIndex, args, 0, argsLength);
 
-            // является ли команда команlой с оним аргументом ? 
+            // является ли команда командой с одним аргументом ? 
             var isSingleArgumentCommand = (commandName == AppConstants.Commands.FileInfo) ||
                 (commandName == AppConstants.Commands.DirectoryInfo) ||
                 (commandName == AppConstants.Commands.Remove);
@@ -519,7 +545,11 @@ namespace ConsoleFileManager
             };
         }
 
-        // 
+        /// <summary>
+        /// Метод для обновления данных в конфиге
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>        
         private void UpdateAppSettings(string key, string value)
         {
             try
