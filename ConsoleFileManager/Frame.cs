@@ -3,6 +3,10 @@ using System.Text;
 
 namespace ConsoleFileManager
 {
+    /// <summary>
+    /// Класс фреймов приложения 
+    /// с общими для всех фремов методами - отрисовки самого фрейма и очистки его содержимого
+    /// </summary>
     class Frame
     {
         private const string lineX = "─";
@@ -21,7 +25,7 @@ namespace ConsoleFileManager
         }
 
         /// <summary>
-        /// Отрисовка окна
+        /// Отрисовка фрейма
         /// </summary>
         public void Dispaly()
         {
@@ -61,7 +65,7 @@ namespace ConsoleFileManager
         }
 
         /// <summary>
-        /// Очитска строк
+        /// Очитска содержимого фрейма
         /// </summary>
         /// <param name="startLine"></param>
         /// <param name="amountLines"></param>

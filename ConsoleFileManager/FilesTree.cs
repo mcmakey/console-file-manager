@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace ConsoleFileManager
 {
@@ -72,7 +71,7 @@ namespace ConsoleFileManager
             // Добавление в список каталога
             items.Add(new FilesTreeItem(root.Name, true, rank));
 
-            // Добавление в файла
+            // Добавление в список файла
             if (files != null)
             {
                 foreach (FileInfo fi in files)

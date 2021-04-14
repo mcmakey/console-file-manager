@@ -1,12 +1,14 @@
 ﻿namespace ConsoleFileManager
 {
     /// <summary>
-    /// Файл (файл или директория) rank - уовень вложенности от указанного корня.
+    /// Пункт дерева файлов (каталог или файл)
     /// </summary>
     class FilesTreeItem
     {
         public string Name { get; }
         public bool IsDirectory { get; }
+
+        // Уровень вложенности (от корневого каталога дерева)
         public int Rank { get; }
 
         public FilesTreeItem(string name, bool isDirectory, int rank)

@@ -3,7 +3,7 @@
 namespace ConsoleFileManager
 {
     /// <summary>
-    /// Класс командного окна
+    /// Класс фрейма командной строки (наследует класс "Frame")
     /// </summary>
     class FrameCommand : Frame
     {
@@ -18,7 +18,7 @@ namespace ConsoleFileManager
         }
 
         /// <summary>
-        /// показ заголовка в командном окне
+        /// Отображение заголовка в командном окне
         /// </summary>
         /// <param name="title"></param>
         public void ShowTitle(string title)
@@ -28,14 +28,14 @@ namespace ConsoleFileManager
         }
 
         /// <summary>
-        /// Подготовка комантной строки к вводу новой команды
+        /// Подготовка командной строки к вводу новой команды
         /// </summary>
         public void CommandLineReady()
         {
             // Очистка окна от предыдущей команды
             Clean();
 
-            // установка курсора в начальную позицию комантной строки
+            // установка курсора в начальную позицию командной строки
             var commandLineContentTopPosition = TopPosition + 1;
             Console.SetCursorPosition(leftPosition, commandLineContentTopPosition);
             Console.WriteLine("Введите команду('help - список команд')");
